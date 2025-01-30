@@ -50,5 +50,12 @@
             "@clear",
             "@php vendor/bin/pest"
         ]
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Trevorpe\\LaravelSymfonyCache\\Providers\\LaravelSymfonyCacheServiceProvider"
+            ]
+        }
     }
 }
