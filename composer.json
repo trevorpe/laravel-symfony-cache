@@ -1,0 +1,28 @@
+{
+    "name": "trevorpe/laravel-symfony-cache",
+    "description": "Use Symfony's Cache bundle with Laravel",
+    "type": "library",
+    "require": {
+        "laravel/framework": "^10.0",
+        "symfony/cache": "^7.2"
+    },
+    "require-dev": {
+        "pestphp/pest": "^2.0"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Trevorpe\\LaravelSymfonyCache\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Trevor Profitt"
+        }
+    ],
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    }
+}
