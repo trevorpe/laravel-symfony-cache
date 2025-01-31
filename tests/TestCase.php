@@ -6,7 +6,7 @@ use Trevorpe\LaravelSymfonyCache\Providers\LaravelSymfonyCacheServiceProvider;
 
 abstract class TestCase extends \Orchestra\Testbench\TestCase
 {
-    protected function getApplicationProviders($app)
+    protected function getPackageProviders($app)
     {
         return [
             LaravelSymfonyCacheServiceProvider::class,
