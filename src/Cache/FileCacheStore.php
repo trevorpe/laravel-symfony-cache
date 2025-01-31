@@ -5,19 +5,19 @@ namespace Trevorpe\LaravelSymfonyCache\Cache;
 use Illuminate\Cache\TaggableStore;
 use Illuminate\Support\Arr;
 use Psr\Cache\CacheItemInterface;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
-use Symfony\Component\Cache\Adapter\TagAwareAdapter;
+use Symfony\Component\Cache\Adapter\FilesystemTagAwareAdapter;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 
 class FileCacheStore extends TaggableStore
 {
     private TagAwareAdapterInterface $cacheAdapter;
 
-    public function __construct()
+    private string $prefix;
+
+    public function __construct(string $prefix = '')
     {
-        $this->cacheAdapter = new TagAwareAdapter(
-            new FilesystemAdapter('', 0, storage_path('cache'))
-        );
+        $this->prefix = $prefix;
+        $this->cacheAdapter = new FilesystemTagAwareAdapter($prefix, 0, storage_path('cache'));
     }
 
     public function get($key)
@@ -98,6 +98,6 @@ class FileCacheStore extends TaggableStore
 
     public function getPrefix()
     {
-        //
+        return $this->prefix;
     }
 }
