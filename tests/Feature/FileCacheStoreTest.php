@@ -40,12 +40,12 @@ describe('put()', function () {
         expect($cache->get('abc'))->toBe('abc');
     });
 
-    it('does not set the value without expiry', function () {
+    it('sets the value forever with 0 second expiry', function () {
         $cache = makeCache();
 
         $cache->put('abc', 'abc', 0);
 
-        expect($cache->get('abc'))->toBeNull();
+        expect($cache->get('abc'))->toBe('abc');
     });
 });
 
