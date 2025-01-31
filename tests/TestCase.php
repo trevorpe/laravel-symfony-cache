@@ -2,9 +2,14 @@
 
 namespace Tests;
 
-use PHPUnit\Framework\TestCase as BaseTestCase;
+use Trevorpe\LaravelSymfonyCache\Providers\LaravelSymfonyCacheServiceProvider;
 
-abstract class TestCase extends BaseTestCase
+abstract class TestCase extends \Orchestra\Testbench\TestCase
 {
-    //
+    protected function getPackageProviders($app)
+    {
+        return [
+            LaravelSymfonyCacheServiceProvider::class,
+        ];
+    }
 }
