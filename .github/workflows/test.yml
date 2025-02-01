@@ -44,4 +44,7 @@ jobs:
           composer update --prefer-dist --no-interaction --no-suggest
 
       - name: Execute tests
+        env:
+          REDIS_HOST: redis
+          REDIS_PORT: 6379
         run: vendor/bin/pest
