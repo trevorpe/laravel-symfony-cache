@@ -38,6 +38,15 @@ describe('get()', function () {
         expect($cache->get('abc'))->toBe('abc');
         expect($cache->tags('tag')->get('abc'))->toBe('abc');
     });
+
+    it('returns value if present regardless of tags', function () {
+        $cache = makeCache();
+
+        $cache->tags('tag')->put('abc', 'abc', 1000);
+
+        expect($cache->get('abc'))->toBe('abc');
+        expect($cache->tags('tag')->get('abc'))->toBe('abc');
+    });
 });
 
 describe('put()', function () {
