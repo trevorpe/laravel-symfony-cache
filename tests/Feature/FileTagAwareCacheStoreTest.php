@@ -1,11 +1,16 @@
 <?php
 
+use Illuminate\Contracts\Cache\Repository;
+use Illuminate\Support\Facades\Cache;
 use Trevorpe\LaravelSymfonyCache\Cache\FileTagAwareCacheStore;
 use Trevorpe\LaravelSymfonyCache\Cache\SymfonyTaggedCache;
 
-function makeCache($tags = []): FileTagAwareCacheStore|SymfonyTaggedCache
+function makeCache($tags = []): Repository|SymfonyTaggedCache
 {
-    $store = new FileTagAwareCacheStore();
+    $store = Cache::store('file');
+
+    // Verify that the override has actually worked
+    expect($store->getStore())->toBeInstanceOf(FileTagAwareCacheStore::class);
 
     if (!empty($tags)) {
         return $store->tags($tags);
@@ -66,15 +71,15 @@ describe('put()', function () {
         expect($cache->get('abc'))->toBe('abc');
     });
 
-    it('sets the value forever with 0 second expiry', function () {
+    it('sets the value forever with null expiry', function () {
         $cache = makeCache();
 
-        $cache->put('abc', 'abc', 0);
+        $cache->put('abc', 'abc', null);
 
         expect($cache->get('abc'))->toBe('abc');
     });
 
-    it('sets the value forever with no expiry with tags', function () {
+    it('sets the value forever with null expiry with tags', function () {
         $cache = makeCache();
 
         $cache->tags('tag')->put('abc', 'abc');
