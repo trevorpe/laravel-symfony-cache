@@ -1,10 +1,17 @@
 <?php
 
 use Trevorpe\LaravelSymfonyCache\Cache\FileCacheStore;
+use Trevorpe\LaravelSymfonyCache\Cache\SymfonyTaggedCache;
 
-function makeCache(): FileCacheStore
+function makeCache($tags = []): FileCacheStore|SymfonyTaggedCache
 {
-    return new FileCacheStore();
+    $store = new FileCacheStore();
+
+    if (!empty($tags)) {
+        return $store->tags($tags);
+    }
+
+    return $store;
 }
 
 beforeEach(function () {
@@ -20,6 +27,7 @@ describe('get()', function () {
         $cache = makeCache();
 
         expect($cache->get('abc'))->toBeNull();
+        expect($cache->tags('tag')->get('abc'))->toBeNull();
     });
 
     it('returns value if present', function () {
@@ -28,6 +36,7 @@ describe('get()', function () {
         $cache->put('abc', 'abc', 1000);
 
         expect($cache->get('abc'))->toBe('abc');
+        expect($cache->tags('tag')->get('abc'))->toBe('abc');
     });
 });
 
@@ -40,10 +49,26 @@ describe('put()', function () {
         expect($cache->get('abc'))->toBe('abc');
     });
 
+    it('sets the value with tags', function () {
+        $cache = makeCache();
+
+        $cache->tags('tag')->put('abc', 'abc', 1000);
+
+        expect($cache->get('abc'))->toBe('abc');
+    });
+
     it('sets the value forever with 0 second expiry', function () {
         $cache = makeCache();
 
         $cache->put('abc', 'abc', 0);
+
+        expect($cache->get('abc'))->toBe('abc');
+    });
+
+    it('sets the value forever with no expiry with tags', function () {
+        $cache = makeCache();
+
+        $cache->tags('tag')->put('abc', 'abc');
 
         expect($cache->get('abc'))->toBe('abc');
     });
@@ -54,6 +79,18 @@ describe('putMany()', function () {
         $cache = makeCache();
 
         $cache->putMany([
+            'abc' => 'abc',
+            'xyz' => 'xyz'
+        ], 1000);
+
+        expect($cache->get('abc'))->toBe('abc');
+        expect($cache->get('xyz'))->toBe('xyz');
+    });
+
+    it('sets many values via associative array with tag', function () {
+        $cache = makeCache();
+
+        $cache->tags('tag')->putMany([
             'abc' => 'abc',
             'xyz' => 'xyz'
         ], 1000);
@@ -72,11 +109,28 @@ describe('increment()', function() {
         expect($cache->get('abc'))->toBe(1);
     });
 
+    it('sets non-existing with tag', function () {
+        $cache = makeCache();
+
+        $cache->tags('tag')->increment('abc');
+
+        expect($cache->get('abc'))->toBe(1);
+    });
+
     it('increments existing', function () {
         $cache = makeCache();
 
         $cache->put('abc', 1, 10000);
         $cache->increment('abc');
+
+        expect($cache->get('abc'))->toBe(2);
+    });
+
+    it('increments existing with tag', function () {
+        $cache = makeCache();
+
+        $cache->tags('tag')->put('abc', 1, 10000);
+        $cache->tags('tag')->increment('abc');
 
         expect($cache->get('abc'))->toBe(2);
     });
@@ -91,7 +145,15 @@ describe('decrement()', function() {
         expect($cache->get('abc'))->toBe(-1);
     });
 
-    it('increments existing', function () {
+    it('sets non-existing with tag', function () {
+        $cache = makeCache();
+
+        $cache->tags('tag')->decrement('abc');
+
+        expect($cache->get('abc'))->toBe(-1);
+    });
+
+    it('decrements existing', function () {
         $cache = makeCache();
 
         $cache->put('abc', 1, 10000);
@@ -99,10 +161,27 @@ describe('decrement()', function() {
 
         expect($cache->get('abc'))->toBe(0);
     });
+
+    it('decrements existing with tag', function () {
+        $cache = makeCache();
+
+        $cache->tags('tag')->put('abc', 1, 10000);
+        $cache->tags('tag')->decrement('abc');
+
+        expect($cache->get('abc'))->toBe(0);
+    });
 });
 
 describe('forever()', function () {
     it('stores value', function () {
+        $cache = makeCache();
+
+        $cache->forever('abc', 10);
+
+        expect($cache->get('abc'))->toBe(10);
+    });
+
+    it('stores value with tag', function () {
         $cache = makeCache();
 
         $cache->forever('abc', 10);
@@ -121,10 +200,29 @@ describe('forget()', function () {
         expect($cache->get('abc'))->toBeNull();
     });
 
+    it('does nothing for a non-existent key with tag', function () {
+        $cache = makeCache();
+
+        $result = $cache->tags('tag')->forget('abc');
+
+        expect($result)->toBeTrue();
+        expect($cache->get('abc'))->toBeNull();
+    });
+
     it('forgets an existing key', function () {
         $cache = makeCache();
 
         $cache->put('abc', 10, 10000);
+        $result = $cache->forget('abc');
+
+        expect($result)->toBeTrue();
+        expect($cache->get('abc'))->toBeNull();
+    });
+
+    it('forgets an existing key with tag', function () {
+        $cache = makeCache();
+
+        $cache->tags('tag')->put('abc', 10, 10000);
         $result = $cache->forget('abc');
 
         expect($result)->toBeTrue();
@@ -150,6 +248,45 @@ describe('flush()', function () {
         $cache->forever('xyz', 10);
 
         $result = $cache->flush();
+
+        expect($result)->toBeTrue();
+        expect($cache->get('abc'))->toBeNull();
+        expect($cache->get('xyz'))->toBeNull();
+    });
+
+    it('clears all tagged values when tag is provided', function () {
+        $cache = makeCache()->tags('tag');
+
+        $cache->put('abc', 10, 10000);
+        $cache->forever('xyz', 10);
+
+        $result = $cache->flush();
+
+        expect($result)->toBeTrue();
+        expect($cache->get('abc'))->toBeNull();
+        expect($cache->get('xyz'))->toBeNull();
+    });
+
+    it('only clears tagged values when tag is provided', function () {
+        $cache = makeCache();
+
+        $cache->tags('tag')->put('abc', 'abc', 10000);
+        $cache->forever('xyz', 'xyz');
+
+        $result = $cache->tags('tag')->flush();
+
+        expect($result)->toBeTrue();
+        expect($cache->get('abc'))->toBeNull();
+        expect($cache->get('xyz'))->toBe('xyz');
+    });
+
+    it('clears all tags', function () {
+        $cache = makeCache();
+
+        $cache->tags('tag1')->put('abc', 'abc', 10000);
+        $cache->tags('tag2')->forever('xyz', 'xyz');
+
+        $result = $cache->tags('tag1', 'tag2')->flush();
 
         expect($result)->toBeTrue();
         expect($cache->get('abc'))->toBeNull();
