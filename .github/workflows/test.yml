@@ -26,6 +26,8 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+        ports:
+          - "6379:6379"
 
     steps:
       - name: Checkout code
@@ -44,7 +46,4 @@ jobs:
           composer update --prefer-dist --no-interaction --no-suggest
 
       - name: Execute tests
-        env:
-          REDIS_HOST: redis
-          REDIS_PORT: 6379
         run: vendor/bin/pest
