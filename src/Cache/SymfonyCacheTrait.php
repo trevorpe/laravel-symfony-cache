@@ -5,6 +5,7 @@ namespace Trevorpe\LaravelSymfonyCache\Cache;
 use Illuminate\Support\Arr;
 use Psr\Cache\CacheItemInterface;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
+use Symfony\Component\Cache\CacheItem;
 
 trait SymfonyCacheTrait
 {
@@ -22,10 +23,15 @@ trait SymfonyCacheTrait
 
     public function many(array $keys)
     {
-        /** @var CacheItemInterface[] $items */
+        /** @var iterable<string, CacheItem> $items */
         $items = $this->cacheAdapter->getItems($keys);
 
-        return Arr::map($items, fn(CacheItemInterface $item) => $item->isHit() ? $item->get() : null);
+        $result = [];
+        foreach ($items as $item) {
+            $result[] = $item->get();
+        }
+
+        return $result;
     }
 
     public function put($key, $value, $seconds)
