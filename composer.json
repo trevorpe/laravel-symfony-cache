@@ -3,6 +3,7 @@
     "description": "Use Symfony's Cache bundle with Laravel",
     "type": "library",
     "require": {
+        "php": ">=8.2",
         "laravel/framework": "^10.0",
         "symfony/cache": "^7.2"
     },
