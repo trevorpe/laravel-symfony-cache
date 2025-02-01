@@ -1,0 +1,17 @@
+services:
+  php:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    working_dir: /var/www
+    volumes:
+      - ".:/var/www"
+    depends_on:
+      - redis
+    environment:
+      REDIS_HOST: redis
+
+  redis:
+    image: redis:6-alpine
+    ports:
+      - "6379:6379"
