@@ -81,14 +81,6 @@ class SymfonyTaggedCache extends TaggedCache
     }
 
     /**
-     * {@inheritdoc}
-     */
-    protected function itemKey($key)
-    {
-        return $this->taggedItemKey($key);
-    }
-
-    /**
      * Get a fully qualified key for a tagged item.
      *
      * @param  string  $key
