@@ -6,7 +6,7 @@ use Illuminate\Cache\TaggableStore;
 use Illuminate\Cache\TagSet;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 
-class TaggedSymfonyCacheStore extends TaggableStore
+class SymfonyTagAwareCacheStore extends TaggableStore
 {
     use SymfonyCacheTrait;
 

@@ -10,11 +10,11 @@ class SymfonyTaggedCache extends TaggedCache
     /** @var SymfonyTagSet */
     protected $tags;
 
-    /** @var TaggedSymfonyCacheStore */
+    /** @var SymfonyTagAwareCacheStore */
     protected $store;
 
     /**
-     * @param TaggedSymfonyCacheStore $store
+     * @param SymfonyTagAwareCacheStore $store
      * @param SymfonyTagSet $tags
      */
     public function __construct(Store $store, SymfonyTagSet $tags)

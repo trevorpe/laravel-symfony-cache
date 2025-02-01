@@ -4,7 +4,7 @@ namespace Trevorpe\LaravelSymfonyCache\Cache;
 
 use Symfony\Component\Cache\Adapter\FilesystemTagAwareAdapter;
 
-class FileCacheStore extends TaggedSymfonyCacheStore
+class FileTagAwareCacheStore extends SymfonyTagAwareCacheStore
 {
     private string $prefix;
 

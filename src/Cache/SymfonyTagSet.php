@@ -6,10 +6,10 @@ use Illuminate\Cache\TagSet;
 
 class SymfonyTagSet extends TagSet
 {
-    /** @var TaggedSymfonyCacheStore */
+    /** @var SymfonyTagAwareCacheStore */
     protected $store;
 
-    public function __construct(TaggedSymfonyCacheStore $store, array $names = [])
+    public function __construct(SymfonyTagAwareCacheStore $store, array $names = [])
     {
         parent::__construct($store, $names);
     }

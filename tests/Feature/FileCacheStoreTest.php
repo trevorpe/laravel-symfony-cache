@@ -1,11 +1,11 @@
 <?php
 
-use Trevorpe\LaravelSymfonyCache\Cache\FileCacheStore;
+use Trevorpe\LaravelSymfonyCache\Cache\FileTagAwareCacheStore;
 use Trevorpe\LaravelSymfonyCache\Cache\SymfonyTaggedCache;
 
-function makeCache($tags = []): FileCacheStore|SymfonyTaggedCache
+function makeCache($tags = []): FileTagAwareCacheStore|SymfonyTaggedCache
 {
-    $store = new FileCacheStore();
+    $store = new FileTagAwareCacheStore();
 
     if (!empty($tags)) {
         return $store->tags($tags);
