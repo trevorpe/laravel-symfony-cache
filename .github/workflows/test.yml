@@ -16,6 +16,15 @@ jobs:
 
     name: P${{ matrix.php }} - L${{ matrix.laravel }}
 
+    redis:
+      # Docker Hub image
+      image: redis:6-alpine
+      # Set health checks to wait until redis has started
+      options: >-
+        --health-cmd "redis-cli ping"
+        --health-interval 10s
+        --health-timeout 5s
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v1
