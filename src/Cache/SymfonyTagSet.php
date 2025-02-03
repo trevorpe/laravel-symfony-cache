@@ -16,10 +16,7 @@ class SymfonyTagSet extends TagSet
 
     public function reset()
     {
-        $this->store->withTags(
-            $this,
-            fn() => $this->store->flush()
-        );
+        $this->store->invalidateTags($this->names);
     }
 
     /**

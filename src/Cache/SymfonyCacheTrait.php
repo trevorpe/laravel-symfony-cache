@@ -2,10 +2,9 @@
 
 namespace Trevorpe\LaravelSymfonyCache\Cache;
 
-use Illuminate\Support\Arr;
-use Psr\Cache\CacheItemInterface;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\Cache\CacheItem;
+use Trevorpe\LaravelSymfonyCache\Util\CacheKey;
 
 trait SymfonyCacheTrait
 {
@@ -17,12 +16,15 @@ trait SymfonyCacheTrait
             return $this->many($key);
         }
 
+        $key = CacheKey::toPsrKey($key);
         $item = $this->cacheAdapter->getItem($key);
         return $item->isHit() ? $item->get() : null;
     }
 
     public function many(array $keys)
     {
+        $keys = array_map(fn($k) => CacheKey::toPsrKey($k), $keys);
+
         /** @var iterable<string, CacheItem> $items */
         $items = $this->cacheAdapter->getItems($keys);
 
@@ -36,7 +38,7 @@ trait SymfonyCacheTrait
 
     public function put($key, $value, $seconds)
     {
-        $item = $this->cacheAdapter->getItem($key);
+        $item = $this->cacheAdapter->getItem(CacheKey::toPsrKey($key));
         $item->set($value);
 
         if ($seconds) {
@@ -52,6 +54,7 @@ trait SymfonyCacheTrait
         $result = true;
 
         foreach ($values as $key => $value) {
+            $key = CacheKey::toPsrKey($key);
             $result = $result && $this->put($key, $value, $seconds);
         }
 
@@ -80,6 +83,7 @@ trait SymfonyCacheTrait
 
     public function forget($key)
     {
+        $key = CacheKey::toPsrKey($key);
         return $this->cacheAdapter->deleteItem($key);
     }
 
