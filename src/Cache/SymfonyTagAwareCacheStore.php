@@ -44,7 +44,9 @@ class SymfonyTagAwareCacheStore extends TaggableStore
 
     public function invalidateTags($names)
     {
-        return $this->cacheAdapter->invalidateTags($names);
+        return $this->cacheAdapter->invalidateTags(
+            is_array($names) ? $names : func_get_args()
+        );
     }
 
     public function withTags(SymfonyTagSet $tags, ?\Closure $callback = null)
