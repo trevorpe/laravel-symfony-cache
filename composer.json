@@ -5,7 +5,7 @@
     "require": {
         "php": ">=8.2",
         "laravel/framework": "^10.0",
-        "symfony/cache": "^7.2"
+        "symfony/cache": "^6.0"
     },
     "require-dev": {
         "pestphp/pest": "^2.0",
