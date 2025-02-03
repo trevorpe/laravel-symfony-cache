@@ -46,11 +46,42 @@ describe('get()', function () {
     });
 });
 
-describe('put()', function () {
+describe('getMultiple()', function () {
+    it('returns null for all missing keys', function () {
+        $cache = Cache::store('symfony_redis');
+
+        $results = $cache->getMultiple(['abc', 'xyz']);
+
+        expect($results)->toEqual(['abc' => null, 'xyz' => null]);
+    });
+
+    it('returns null for partial missing keys', function () {
+        $cache = Cache::store('symfony_redis');
+
+        $cache->put('abc', 'abc');
+        $results = $cache->getMultiple(['abc', 'xyz']);
+
+        expect($results)->toEqual(['abc' => 'abc', 'xyz' => null]);
+    });
+
+    it('returns values for all available keys', function () {
+        $cache = Cache::store('symfony_redis');
+        $cache->setMultiple([
+            'abc' => 'abc',
+            'xyz' => 'xyz'
+        ]);
+
+        $results = $cache->getMultiple(['abc', 'xyz']);
+
+        expect($results)->toEqual(['abc' => 'abc', 'xyz' => 'xyz']);
+    });
+});
+
+describe('set()', function () {
     it('sets the value', function () {
         $cache = Cache::store('symfony_redis');
 
-        $cache->put('abc', 'abc', 1000);
+        $cache->set('abc', 'abc', 1000);
 
         expect($cache->get('abc'))->toBe('abc');
     });
@@ -58,7 +89,7 @@ describe('put()', function () {
     it('sets the value with colon in key', function () {
         $cache = Cache::store('symfony_redis');
 
-        $cache->put('a:b:c', 'a:b:c', 1000);
+        $cache->set('a:b:c', 'a:b:c', 1000);
 
         expect($cache->get('a:b:c'))->toBe('a:b:c');
     });
@@ -66,7 +97,7 @@ describe('put()', function () {
     it('sets the value with tags', function () {
         $cache = Cache::store('symfony_redis');
 
-        $cache->tags('tag')->put('abc', 'abc', 1000);
+        $cache->tags('tag')->set('abc', 'abc', 1000);
 
         expect($cache->get('abc'))->toBe('abc');
     });
@@ -74,7 +105,7 @@ describe('put()', function () {
     it('sets the value with tags with colons', function () {
         $cache = Cache::store('symfony_redis');
 
-        $cache->tags('t:a:g')->put('a:b:c', 'a:b:c', 1000);
+        $cache->tags('t:a:g')->set('a:b:c', 'a:b:c', 1000);
 
         expect($cache->get('a:b:c'))->toBe('a:b:c');
     });
@@ -82,7 +113,7 @@ describe('put()', function () {
     it('sets the value forever with null expiry', function () {
         $cache = Cache::store('symfony_redis');
 
-        $cache->put('abc', 'abc', null);
+        $cache->set('abc', 'abc', null);
 
         expect($cache->get('abc'))->toBe('abc');
     });
@@ -90,17 +121,17 @@ describe('put()', function () {
     it('sets the value forever with null expiry with tags', function () {
         $cache = Cache::store('symfony_redis');
 
-        $cache->tags('tag')->put('abc', 'abc');
+        $cache->tags('tag')->set('abc', 'abc');
 
         expect($cache->get('abc'))->toBe('abc');
     });
 });
 
-describe('putMany()', function () {
+describe('setMultiple()', function () {
     it('sets many values via associative array', function () {
         $cache = Cache::store('symfony_redis');
-
-        $cache->putMany([
+        
+        $cache->setMultiple([
             'abc' => 'abc',
             'xyz' => 'xyz'
         ], 1000);
@@ -112,7 +143,7 @@ describe('putMany()', function () {
     it('sets many values via associative array with colons', function () {
         $cache = Cache::store('symfony_redis');
 
-        $cache->putMany([
+        $cache->setMultiple([
             'a:b:c' => 'a:b:c',
             'x:y:z' => 'x:y:z'
         ], 1000);
@@ -124,7 +155,7 @@ describe('putMany()', function () {
     it('sets many values via associative array with tag with colons', function () {
         $cache = Cache::store('symfony_redis');
 
-        $cache->tags('tag')->putMany([
+        $cache->tags('tag')->setMultiple([
             'abc' => 'abc',
             'xyz' => 'xyz'
         ], 1000);
@@ -136,7 +167,7 @@ describe('putMany()', function () {
     it('sets many values via associative array with tag', function () {
         $cache = Cache::store('symfony_redis');
 
-        $cache->tags('t:a:g')->putMany([
+        $cache->tags('t:a:g')->setMultiple([
             'a:b:c' => 'a:b:c',
             'x:y:z' => 'x:y:z'
         ], 1000);
@@ -182,7 +213,7 @@ describe('increment()', function() {
     it('increments existing', function () {
         $cache = Cache::store('symfony_redis');
 
-        $cache->put('abc', 1, 10000);
+        $cache->set('abc', 1, 10000);
         $cache->increment('abc');
 
         expect($cache->get('abc'))->toBe(2);
@@ -191,7 +222,7 @@ describe('increment()', function() {
     it('increments existing with colons', function () {
         $cache = Cache::store('symfony_redis');
 
-        $cache->put('a:b:c', 1, 10000);
+        $cache->set('a:b:c', 1, 10000);
         $cache->increment('a:b:c');
 
         expect($cache->get('a:b:c'))->toBe(2);
@@ -200,7 +231,7 @@ describe('increment()', function() {
     it('increments existing with tag', function () {
         $cache = Cache::store('symfony_redis');
 
-        $cache->tags('tag')->put('abc', 1, 10000);
+        $cache->tags('tag')->set('abc', 1, 10000);
         $cache->tags('tag')->increment('abc');
 
         expect($cache->get('abc'))->toBe(2);
@@ -209,7 +240,7 @@ describe('increment()', function() {
     it('increments existing with tag with colons', function () {
         $cache = Cache::store('symfony_redis');
 
-        $cache->tags('t:a:g')->put('a:b:c', 1, 10000);
+        $cache->tags('t:a:g')->set('a:b:c', 1, 10000);
         $cache->tags('t:a:g')->increment('a:b:c');
 
         expect($cache->get('a:b:c'))->toBe(2);
@@ -252,7 +283,7 @@ describe('decrement()', function() {
     it('decrements existing', function () {
         $cache = Cache::store('symfony_redis');
 
-        $cache->put('abc', 1, 10000);
+        $cache->set('abc', 1, 10000);
         $cache->decrement('abc');
 
         expect($cache->get('abc'))->toBe(0);
@@ -261,7 +292,7 @@ describe('decrement()', function() {
     it('decrements existing with colons', function () {
         $cache = Cache::store('symfony_redis');
 
-        $cache->put('a:b:c', 1, 10000);
+        $cache->set('a:b:c', 1, 10000);
         $cache->decrement('a:b:c');
 
         expect($cache->get('a:b:c'))->toBe(0);
@@ -270,7 +301,7 @@ describe('decrement()', function() {
     it('decrements existing with tag', function () {
         $cache = Cache::store('symfony_redis');
 
-        $cache->tags('tag')->put('abc', 1, 10000);
+        $cache->tags('tag')->set('abc', 1, 10000);
         $cache->tags('tag')->decrement('abc');
 
         expect($cache->get('abc'))->toBe(0);
@@ -279,7 +310,7 @@ describe('decrement()', function() {
     it('decrements existing with tag with colons', function () {
         $cache = Cache::store('symfony_redis');
 
-        $cache->tags('t:a:g')->put('a:b:c', 1, 10000);
+        $cache->tags('t:a:g')->set('a:b:c', 1, 10000);
         $cache->tags('t:a:g')->decrement('a:b:c');
 
         expect($cache->get('a:b:c'))->toBe(0);
@@ -360,7 +391,7 @@ describe('forget()', function () {
     it('forgets an existing key', function () {
         $cache = Cache::store('symfony_redis');
 
-        $cache->put('abc', 10, 10000);
+        $cache->set('abc', 10, 10000);
         $result = $cache->forget('abc');
 
         expect($result)->toBeTrue();
@@ -370,7 +401,7 @@ describe('forget()', function () {
     it('forgets an existing key with colons', function () {
         $cache = Cache::store('symfony_redis');
 
-        $cache->put('a:b:c', 10, 10000);
+        $cache->set('a:b:c', 10, 10000);
         $result = $cache->forget('a:b:c');
 
         expect($result)->toBeTrue();
@@ -380,7 +411,7 @@ describe('forget()', function () {
     it('forgets an existing key with tag', function () {
         $cache = Cache::store('symfony_redis');
 
-        $cache->tags('tag')->put('abc', 10, 10000);
+        $cache->tags('tag')->set('abc', 10, 10000);
         $result = $cache->forget('abc');
 
         expect($result)->toBeTrue();
@@ -390,7 +421,7 @@ describe('forget()', function () {
     it('forgets an existing key with tag with colons', function () {
         $cache = Cache::store('symfony_redis');
 
-        $cache->tags('t:a:g')->put('a:b:c', 10, 10000);
+        $cache->tags('t:a:g')->set('a:b:c', 10, 10000);
         $result = $cache->forget('a:b:c');
 
         expect($result)->toBeTrue();
@@ -412,7 +443,7 @@ describe('flush()', function () {
     it('clears all values', function () {
         $cache = Cache::store('symfony_redis');
 
-        $cache->put('abc', 10, 10000);
+        $cache->set('abc', 10, 10000);
         $cache->forever('xyz', 10);
 
         $result = $cache->flush();
@@ -425,7 +456,7 @@ describe('flush()', function () {
     it('clears all tagged values when tag is provided', function () {
         $cache = Cache::store('symfony_redis')->tags('tag');
 
-        $cache->put('abc', 10, 10000);
+        $cache->set('abc', 10, 10000);
         $cache->forever('xyz', 10);
 
         $result = $cache->flush();
@@ -438,7 +469,7 @@ describe('flush()', function () {
     it('clears all tagged values when tag is provided with colons', function () {
         $cache = Cache::store('symfony_redis')->tags('t:a:g');
 
-        $cache->put('a:b:c', 10, 10000);
+        $cache->set('a:b:c', 10, 10000);
         $cache->forever('x:y:z', 10);
 
         $result = $cache->flush();
@@ -451,7 +482,7 @@ describe('flush()', function () {
     it('only clears tagged values when tag is provided', function () {
         $cache = Cache::store('symfony_redis');
 
-        $cache->tags('tag')->put('abc', 'abc', 10000);
+        $cache->tags('tag')->set('abc', 'abc', 10000);
         $cache->forever('xyz', 'xyz');
 
         $result = $cache->tags('tag')->flush();
@@ -464,7 +495,7 @@ describe('flush()', function () {
     it('only clears tagged values when tag is provided with colons', function () {
         $cache = Cache::store('symfony_redis');
 
-        $cache->tags('t:a:g')->put('a:b:c', 'a:b:c', 10000);
+        $cache->tags('t:a:g')->set('a:b:c', 'a:b:c', 10000);
         $cache->forever('x:y:z', 'x:y:z');
 
         $result = $cache->tags('t:a:g')->flush();
@@ -477,7 +508,7 @@ describe('flush()', function () {
     it('clears all tags', function () {
         $cache = Cache::store('symfony_redis');
 
-        $cache->tags('tag1')->put('abc', 'abc', 10000);
+        $cache->tags('tag1')->set('abc', 'abc', 10000);
         $cache->tags('tag2')->forever('xyz', 'xyz');
 
         $result = $cache->tags('tag1', 'tag2')->flush();
@@ -490,7 +521,7 @@ describe('flush()', function () {
     it('clears all tags with colons', function () {
         $cache = Cache::store('symfony_redis');
 
-        $cache->tags('tag:1')->put('a:b:c', 'a:b:c', 10000);
+        $cache->tags('tag:1')->set('a:b:c', 'a:b:c', 10000);
         $cache->tags('tag:2')->forever('x:y:z', 'x:y:z');
 
         $result = $cache->tags('tag:1', 'tag:2')->flush();

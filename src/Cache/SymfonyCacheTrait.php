@@ -29,8 +29,8 @@ trait SymfonyCacheTrait
         $items = $this->cacheAdapter->getItems($keys);
 
         $result = [];
-        foreach ($items as $item) {
-            $result[] = $item->get();
+        foreach ($items as $key => $item) {
+            $result[$key] = $item->get();
         }
 
         return $result;

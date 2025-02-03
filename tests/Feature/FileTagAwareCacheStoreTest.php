@@ -35,29 +35,85 @@ describe('get()', function () {
         expect($cache->get('abc'))->toBe('abc');
         expect($cache->tags('tag')->get('abc'))->toBe('abc');
     });
+
+    it('returns value with colon', function () {
+        $cache = Cache::store('symfony_file');
+
+        $cache->tags('t:a:g')->put('a:b:c', 'a:b:c', 1000);
+
+        expect($cache->get('a:b:c'))->toBe('a:b:c');
+        expect($cache->tags('t:a:g')->get('a:b:c'))->toBe('a:b:c');
+    });
 });
 
-describe('put()', function () {
+describe('getMultiple()', function () {
+    it('returns null for all missing keys', function () {
+        $cache = Cache::store('symfony_file');
+
+        $results = $cache->getMultiple(['abc', 'xyz']);
+
+        expect($results)->toEqual(['abc' => null, 'xyz' => null]);
+    });
+
+    it('returns null for partial missing keys', function () {
+        $cache = Cache::store('symfony_file');
+
+        $cache->put('abc', 'abc');
+        $results = $cache->getMultiple(['abc', 'xyz']);
+
+        expect($results)->toEqual(['abc' => 'abc', 'xyz' => null]);
+    });
+
+    it('returns values for all available keys', function () {
+        $cache = Cache::store('symfony_file');
+        $cache->setMultiple([
+            'abc' => 'abc',
+            'xyz' => 'xyz'
+        ]);
+
+        $results = $cache->getMultiple(['abc', 'xyz']);
+
+        expect($results)->toEqual(['abc' => 'abc', 'xyz' => 'xyz']);
+    });
+});
+
+describe('set()', function () {
     it('sets the value', function () {
         $cache = Cache::store('symfony_file');
 
-        $cache->put('abc', 'abc', 1000);
+        $cache->set('abc', 'abc', 1000);
 
         expect($cache->get('abc'))->toBe('abc');
+    });
+
+    it('sets the value with colon in key', function () {
+        $cache = Cache::store('symfony_file');
+
+        $cache->set('a:b:c', 'a:b:c', 1000);
+
+        expect($cache->get('a:b:c'))->toBe('a:b:c');
     });
 
     it('sets the value with tags', function () {
         $cache = Cache::store('symfony_file');
 
-        $cache->tags('tag')->put('abc', 'abc', 1000);
+        $cache->tags('tag')->set('abc', 'abc', 1000);
 
         expect($cache->get('abc'))->toBe('abc');
+    });
+
+    it('sets the value with tags with colons', function () {
+        $cache = Cache::store('symfony_file');
+
+        $cache->tags('t:a:g')->set('a:b:c', 'a:b:c', 1000);
+
+        expect($cache->get('a:b:c'))->toBe('a:b:c');
     });
 
     it('sets the value forever with null expiry', function () {
         $cache = Cache::store('symfony_file');
 
-        $cache->put('abc', 'abc', null);
+        $cache->set('abc', 'abc', null);
 
         expect($cache->get('abc'))->toBe('abc');
     });
@@ -65,17 +121,41 @@ describe('put()', function () {
     it('sets the value forever with null expiry with tags', function () {
         $cache = Cache::store('symfony_file');
 
-        $cache->tags('tag')->put('abc', 'abc');
+        $cache->tags('tag')->set('abc', 'abc');
 
         expect($cache->get('abc'))->toBe('abc');
     });
 });
 
-describe('putMany()', function () {
+describe('setMultiple()', function () {
     it('sets many values via associative array', function () {
         $cache = Cache::store('symfony_file');
 
-        $cache->putMany([
+        $cache->setMultiple([
+            'abc' => 'abc',
+            'xyz' => 'xyz'
+        ], 1000);
+
+        expect($cache->get('abc'))->toBe('abc');
+        expect($cache->get('xyz'))->toBe('xyz');
+    });
+
+    it('sets many values via associative array with colons', function () {
+        $cache = Cache::store('symfony_file');
+
+        $cache->setMultiple([
+            'a:b:c' => 'a:b:c',
+            'x:y:z' => 'x:y:z'
+        ], 1000);
+
+        expect($cache->get('a:b:c'))->toBe('a:b:c');
+        expect($cache->get('x:y:z'))->toBe('x:y:z');
+    });
+
+    it('sets many values via associative array with tag with colons', function () {
+        $cache = Cache::store('symfony_file');
+
+        $cache->tags('tag')->setMultiple([
             'abc' => 'abc',
             'xyz' => 'xyz'
         ], 1000);
@@ -87,13 +167,13 @@ describe('putMany()', function () {
     it('sets many values via associative array with tag', function () {
         $cache = Cache::store('symfony_file');
 
-        $cache->tags('tag')->putMany([
-            'abc' => 'abc',
-            'xyz' => 'xyz'
+        $cache->tags('t:a:g')->setMultiple([
+            'a:b:c' => 'a:b:c',
+            'x:y:z' => 'x:y:z'
         ], 1000);
 
-        expect($cache->get('abc'))->toBe('abc');
-        expect($cache->get('xyz'))->toBe('xyz');
+        expect($cache->get('a:b:c'))->toBe('a:b:c');
+        expect($cache->get('x:y:z'))->toBe('x:y:z');
     });
 });
 
@@ -106,6 +186,14 @@ describe('increment()', function() {
         expect($cache->get('abc'))->toBe(1);
     });
 
+    it('sets non-existing with colons', function () {
+        $cache = Cache::store('symfony_file');
+
+        $cache->increment('a:b:c');
+
+        expect($cache->get('a:b:c'))->toBe(1);
+    });
+
     it('sets non-existing with tag', function () {
         $cache = Cache::store('symfony_file');
 
@@ -114,22 +202,48 @@ describe('increment()', function() {
         expect($cache->get('abc'))->toBe(1);
     });
 
+    it('sets non-existing with tag with colons', function () {
+        $cache = Cache::store('symfony_file');
+
+        $cache->tags('t:a:g')->increment('a:b:c');
+
+        expect($cache->get('a:b:c'))->toBe(1);
+    });
+
     it('increments existing', function () {
         $cache = Cache::store('symfony_file');
 
-        $cache->put('abc', 1, 10000);
+        $cache->set('abc', 1, 10000);
         $cache->increment('abc');
 
         expect($cache->get('abc'))->toBe(2);
     });
 
+    it('increments existing with colons', function () {
+        $cache = Cache::store('symfony_file');
+
+        $cache->set('a:b:c', 1, 10000);
+        $cache->increment('a:b:c');
+
+        expect($cache->get('a:b:c'))->toBe(2);
+    });
+
     it('increments existing with tag', function () {
         $cache = Cache::store('symfony_file');
 
-        $cache->tags('tag')->put('abc', 1, 10000);
+        $cache->tags('tag')->set('abc', 1, 10000);
         $cache->tags('tag')->increment('abc');
 
         expect($cache->get('abc'))->toBe(2);
+    });
+
+    it('increments existing with tag with colons', function () {
+        $cache = Cache::store('symfony_file');
+
+        $cache->tags('t:a:g')->set('a:b:c', 1, 10000);
+        $cache->tags('t:a:g')->increment('a:b:c');
+
+        expect($cache->get('a:b:c'))->toBe(2);
     });
 });
 
@@ -142,6 +256,14 @@ describe('decrement()', function() {
         expect($cache->get('abc'))->toBe(-1);
     });
 
+    it('sets non-existing with colons', function () {
+        $cache = Cache::store('symfony_file');
+
+        $cache->decrement('a:b:c');
+
+        expect($cache->get('a:b:c'))->toBe(-1);
+    });
+
     it('sets non-existing with tag', function () {
         $cache = Cache::store('symfony_file');
 
@@ -150,22 +272,48 @@ describe('decrement()', function() {
         expect($cache->get('abc'))->toBe(-1);
     });
 
+    it('sets non-existing with tag with colons', function () {
+        $cache = Cache::store('symfony_file');
+
+        $cache->tags('t:a:g')->decrement('a:b:c');
+
+        expect($cache->get('a:b:c'))->toBe(-1);
+    });
+
     it('decrements existing', function () {
         $cache = Cache::store('symfony_file');
 
-        $cache->put('abc', 1, 10000);
+        $cache->set('abc', 1, 10000);
         $cache->decrement('abc');
 
         expect($cache->get('abc'))->toBe(0);
     });
 
+    it('decrements existing with colons', function () {
+        $cache = Cache::store('symfony_file');
+
+        $cache->set('a:b:c', 1, 10000);
+        $cache->decrement('a:b:c');
+
+        expect($cache->get('a:b:c'))->toBe(0);
+    });
+
     it('decrements existing with tag', function () {
         $cache = Cache::store('symfony_file');
 
-        $cache->tags('tag')->put('abc', 1, 10000);
+        $cache->tags('tag')->set('abc', 1, 10000);
         $cache->tags('tag')->decrement('abc');
 
         expect($cache->get('abc'))->toBe(0);
+    });
+
+    it('decrements existing with tag with colons', function () {
+        $cache = Cache::store('symfony_file');
+
+        $cache->tags('t:a:g')->set('a:b:c', 1, 10000);
+        $cache->tags('t:a:g')->decrement('a:b:c');
+
+        expect($cache->get('a:b:c'))->toBe(0);
     });
 });
 
@@ -178,12 +326,28 @@ describe('forever()', function () {
         expect($cache->get('abc'))->toBe(10);
     });
 
+    it('stores value with colons', function () {
+        $cache = Cache::store('symfony_file');
+
+        $cache->forever('a:b:c', 10);
+
+        expect($cache->get('a:b:c'))->toBe(10);
+    });
+
     it('stores value with tag', function () {
         $cache = Cache::store('symfony_file');
 
         $cache->forever('abc', 10);
 
         expect($cache->get('abc'))->toBe(10);
+    });
+
+    it('stores value with tag with colons', function () {
+        $cache = Cache::store('symfony_file');
+
+        $cache->forever('a:b:c', 10);
+
+        expect($cache->get('a:b:c'))->toBe(10);
     });
 });
 
@@ -197,6 +361,15 @@ describe('forget()', function () {
         expect($cache->get('abc'))->toBeNull();
     });
 
+    it('does nothing for a non-existent key with colons', function () {
+        $cache = Cache::store('symfony_file');
+
+        $result = $cache->forget('a:b:c');
+
+        expect($result)->toBeTrue();
+        expect($cache->get('a:b:c'))->toBeNull();
+    });
+
     it('does nothing for a non-existent key with tag', function () {
         $cache = Cache::store('symfony_file');
 
@@ -206,24 +379,53 @@ describe('forget()', function () {
         expect($cache->get('abc'))->toBeNull();
     });
 
+    it('does nothing for a non-existent key with tag with colons', function () {
+        $cache = Cache::store('symfony_file');
+
+        $result = $cache->tags('t:a:g')->forget('a:b:c');
+
+        expect($result)->toBeTrue();
+        expect($cache->get('a:b:c'))->toBeNull();
+    });
+
     it('forgets an existing key', function () {
         $cache = Cache::store('symfony_file');
 
-        $cache->put('abc', 10, 10000);
+        $cache->set('abc', 10, 10000);
         $result = $cache->forget('abc');
 
         expect($result)->toBeTrue();
         expect($cache->get('abc'))->toBeNull();
     });
 
+    it('forgets an existing key with colons', function () {
+        $cache = Cache::store('symfony_file');
+
+        $cache->set('a:b:c', 10, 10000);
+        $result = $cache->forget('a:b:c');
+
+        expect($result)->toBeTrue();
+        expect($cache->get('a:b:c'))->toBeNull();
+    });
+
     it('forgets an existing key with tag', function () {
         $cache = Cache::store('symfony_file');
 
-        $cache->tags('tag')->put('abc', 10, 10000);
+        $cache->tags('tag')->set('abc', 10, 10000);
         $result = $cache->forget('abc');
 
         expect($result)->toBeTrue();
         expect($cache->get('abc'))->toBeNull();
+    });
+
+    it('forgets an existing key with tag with colons', function () {
+        $cache = Cache::store('symfony_file');
+
+        $cache->tags('t:a:g')->set('a:b:c', 10, 10000);
+        $result = $cache->forget('a:b:c');
+
+        expect($result)->toBeTrue();
+        expect($cache->get('a:b:c'))->toBeNull();
     });
 });
 
@@ -241,7 +443,7 @@ describe('flush()', function () {
     it('clears all values', function () {
         $cache = Cache::store('symfony_file');
 
-        $cache->put('abc', 10, 10000);
+        $cache->set('abc', 10, 10000);
         $cache->forever('xyz', 10);
 
         $result = $cache->flush();
@@ -254,7 +456,7 @@ describe('flush()', function () {
     it('clears all tagged values when tag is provided', function () {
         $cache = Cache::store('symfony_file')->tags('tag');
 
-        $cache->put('abc', 10, 10000);
+        $cache->set('abc', 10, 10000);
         $cache->forever('xyz', 10);
 
         $result = $cache->flush();
@@ -264,10 +466,23 @@ describe('flush()', function () {
         expect($cache->get('xyz'))->toBeNull();
     });
 
+    it('clears all tagged values when tag is provided with colons', function () {
+        $cache = Cache::store('symfony_file')->tags('t:a:g');
+
+        $cache->set('a:b:c', 10, 10000);
+        $cache->forever('x:y:z', 10);
+
+        $result = $cache->flush();
+
+        expect($result)->toBeTrue();
+        expect($cache->get('a:b:c'))->toBeNull();
+        expect($cache->get('x:y:z'))->toBeNull();
+    });
+
     it('only clears tagged values when tag is provided', function () {
         $cache = Cache::store('symfony_file');
 
-        $cache->tags('tag')->put('abc', 'abc', 10000);
+        $cache->tags('tag')->set('abc', 'abc', 10000);
         $cache->forever('xyz', 'xyz');
 
         $result = $cache->tags('tag')->flush();
@@ -277,10 +492,23 @@ describe('flush()', function () {
         expect($cache->get('xyz'))->toBe('xyz');
     });
 
+    it('only clears tagged values when tag is provided with colons', function () {
+        $cache = Cache::store('symfony_file');
+
+        $cache->tags('t:a:g')->set('a:b:c', 'a:b:c', 10000);
+        $cache->forever('x:y:z', 'x:y:z');
+
+        $result = $cache->tags('t:a:g')->flush();
+
+        expect($result)->toBeTrue();
+        expect($cache->get('a:b:c'))->toBeNull();
+        expect($cache->get('x:y:z'))->toBe('x:y:z');
+    });
+
     it('clears all tags', function () {
         $cache = Cache::store('symfony_file');
 
-        $cache->tags('tag1')->put('abc', 'abc', 10000);
+        $cache->tags('tag1')->set('abc', 'abc', 10000);
         $cache->tags('tag2')->forever('xyz', 'xyz');
 
         $result = $cache->tags('tag1', 'tag2')->flush();
@@ -288,5 +516,18 @@ describe('flush()', function () {
         expect($result)->toBeTrue();
         expect($cache->get('abc'))->toBeNull();
         expect($cache->get('xyz'))->toBeNull();
+    });
+
+    it('clears all tags with colons', function () {
+        $cache = Cache::store('symfony_file');
+
+        $cache->tags('tag:1')->set('a:b:c', 'a:b:c', 10000);
+        $cache->tags('tag:2')->forever('x:y:z', 'x:y:z');
+
+        $result = $cache->tags('tag:1', 'tag:2')->flush();
+
+        expect($result)->toBeTrue();
+        expect($cache->get('a:b:c'))->toBeNull();
+        expect($cache->get('x:y:z'))->toBeNull();
     });
 });
