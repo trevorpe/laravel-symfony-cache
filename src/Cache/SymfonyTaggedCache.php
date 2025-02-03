@@ -69,18 +69,6 @@ class SymfonyTaggedCache extends TaggedCache
     }
 
     /**
-     * Remove all items from the cache.
-     *
-     * @return bool
-     */
-    public function flush()
-    {
-        $this->tags->reset();
-
-        return true;
-    }
-
-    /**
      * Get a fully qualified key for a tagged item.
      *
      * @param  string  $key
