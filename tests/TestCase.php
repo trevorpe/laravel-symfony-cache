@@ -3,6 +3,8 @@
 namespace Tests;
 
 use Illuminate\Config\Repository;
+use Illuminate\Foundation\Application;
+use Symfony\Component\Cache\Adapter\ApcuAdapter;
 use Symfony\Component\Cache\Adapter\FilesystemTagAwareAdapter;
 use Symfony\Component\Cache\Adapter\RedisTagAwareAdapter;
 use Trevorpe\LaravelSymfonyCache\Providers\LaravelSymfonyCacheServiceProvider;
@@ -34,6 +36,19 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
             'driver' => 'symfony',
             'adapter' => FilesystemTagAwareAdapter::class,
             'path' => storage_path('framework/cache/data'),
+        ]);
+
+        /*
+         * Invalid adapter configurations
+         */
+        $config->set('cache.stores.symfony_non_cache', [
+            'driver' => 'symfony',
+            'adapter' => Application::class,
+        ]);
+
+        $config->set('cache.stores.symfony_unsupported', [
+            'driver' => 'symfony',
+            'adapter' => ApcuAdapter::class,
         ]);
     }
 }
