@@ -5,6 +5,7 @@ namespace Trevorpe\LaravelSymfonyCache\Cache;
 use Illuminate\Cache\TaggableStore;
 use Illuminate\Cache\TagSet;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
+use Trevorpe\LaravelSymfonyCache\Util\CacheKey;
 
 class SymfonyTagAwareCacheStore extends TaggableStore
 {
@@ -19,6 +20,7 @@ class SymfonyTagAwareCacheStore extends TaggableStore
 
     public function put($key, $value, $seconds)
     {
+        $key = CacheKey::toPsrKey($key);
         $item = $this->cacheAdapter->getItem($key);
         $item->set($value);
 
@@ -26,7 +28,9 @@ class SymfonyTagAwareCacheStore extends TaggableStore
             $item->expiresAfter($seconds);
         }
         if ($this->tags) {
-            $item->tag($this->tags->getNames());
+            $item->tag(
+                array_map(fn($t) => CacheKey::toPsrKey($t), $this->tags->getNames())
+            );
         }
 
         $this->cacheAdapter->save($item);
@@ -39,13 +43,15 @@ class SymfonyTagAwareCacheStore extends TaggableStore
             return $this->cacheAdapter->clear();
         }
 
-        return $this->cacheAdapter->invalidateTags($this->tags->getNames());
+        return $this->invalidateTags($this->tags->getNames());
     }
 
     public function invalidateTags($names)
     {
+        $tags = is_array($names) ? $names : func_get_args();
+
         return $this->cacheAdapter->invalidateTags(
-            is_array($names) ? $names : func_get_args()
+            array_map(fn($t) => CacheKey::toPsrKey($t), $tags)
         );
     }
 
