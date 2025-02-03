@@ -1,42 +1,25 @@
 <?php
 
-use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Support\Facades\Cache;
-use Trevorpe\LaravelSymfonyCache\Cache\RedisTagAwareCacheStore;
-use Trevorpe\LaravelSymfonyCache\Cache\SymfonyTaggedCache;
-
-function makeRedisCache($tags = []): Repository|SymfonyTaggedCache
-{
-    $store = Cache::store('redis');
-
-    // Verify that the override has actually worked
-    expect($store->getStore())->toBeInstanceOf(RedisTagAwareCacheStore::class);
-
-    if (!empty($tags)) {
-        return $store->tags($tags);
-    }
-
-    return $store;
-}
 
 beforeEach(function () {
-    makeRedisCache()->flush();
+    Cache::store('symfony_redis')->flush();
 });
 
 afterEach(function () {
-    makeRedisCache()->flush();
+    Cache::store('symfony_redis')->flush();
 });
 
 describe('get()', function () {
     it('returns null for missing item', function () {
-        $cache = makeRedisCache();
+        $cache = Cache::store('symfony_redis');
 
         expect($cache->get('abc'))->toBeNull();
         expect($cache->tags('tag')->get('abc'))->toBeNull();
     });
 
     it('returns value if present', function () {
-        $cache = makeRedisCache();
+        $cache = Cache::store('symfony_redis');
 
         $cache->put('abc', 'abc', 1000);
 
@@ -45,7 +28,7 @@ describe('get()', function () {
     });
 
     it('returns value if present regardless of tags', function () {
-        $cache = makeRedisCache();
+        $cache = Cache::store('symfony_redis');
 
         $cache->tags('tag')->put('abc', 'abc', 1000);
 
@@ -56,7 +39,7 @@ describe('get()', function () {
 
 describe('put()', function () {
     it('sets the value', function () {
-        $cache = makeRedisCache();
+        $cache = Cache::store('symfony_redis');
 
         $cache->put('abc', 'abc', 1000);
 
@@ -64,7 +47,7 @@ describe('put()', function () {
     });
 
     it('sets the value with tags', function () {
-        $cache = makeRedisCache();
+        $cache = Cache::store('symfony_redis');
 
         $cache->tags('tag')->put('abc', 'abc', 1000);
 
@@ -72,7 +55,7 @@ describe('put()', function () {
     });
 
     it('sets the value forever with null expiry', function () {
-        $cache = makeRedisCache();
+        $cache = Cache::store('symfony_redis');
 
         $cache->put('abc', 'abc', null);
 
@@ -80,7 +63,7 @@ describe('put()', function () {
     });
 
     it('sets the value forever with null expiry with tags', function () {
-        $cache = makeRedisCache();
+        $cache = Cache::store('symfony_redis');
 
         $cache->tags('tag')->put('abc', 'abc');
 
@@ -90,7 +73,7 @@ describe('put()', function () {
 
 describe('putMany()', function () {
     it('sets many values via associative array', function () {
-        $cache = makeRedisCache();
+        $cache = Cache::store('symfony_redis');
 
         $cache->putMany([
             'abc' => 'abc',
@@ -102,7 +85,7 @@ describe('putMany()', function () {
     });
 
     it('sets many values via associative array with tag', function () {
-        $cache = makeRedisCache();
+        $cache = Cache::store('symfony_redis');
 
         $cache->tags('tag')->putMany([
             'abc' => 'abc',
@@ -116,7 +99,7 @@ describe('putMany()', function () {
 
 describe('increment()', function() {
     it('sets non-existing', function () {
-        $cache = makeRedisCache();
+        $cache = Cache::store('symfony_redis');
 
         $cache->increment('abc');
 
@@ -124,7 +107,7 @@ describe('increment()', function() {
     });
 
     it('sets non-existing with tag', function () {
-        $cache = makeRedisCache();
+        $cache = Cache::store('symfony_redis');
 
         $cache->tags('tag')->increment('abc');
 
@@ -132,7 +115,7 @@ describe('increment()', function() {
     });
 
     it('increments existing', function () {
-        $cache = makeRedisCache();
+        $cache = Cache::store('symfony_redis');
 
         $cache->put('abc', 1, 10000);
         $cache->increment('abc');
@@ -141,7 +124,7 @@ describe('increment()', function() {
     });
 
     it('increments existing with tag', function () {
-        $cache = makeRedisCache();
+        $cache = Cache::store('symfony_redis');
 
         $cache->tags('tag')->put('abc', 1, 10000);
         $cache->tags('tag')->increment('abc');
@@ -152,7 +135,7 @@ describe('increment()', function() {
 
 describe('decrement()', function() {
     it('sets non-existing', function () {
-        $cache = makeRedisCache();
+        $cache = Cache::store('symfony_redis');
 
         $cache->decrement('abc');
 
@@ -160,7 +143,7 @@ describe('decrement()', function() {
     });
 
     it('sets non-existing with tag', function () {
-        $cache = makeRedisCache();
+        $cache = Cache::store('symfony_redis');
 
         $cache->tags('tag')->decrement('abc');
 
@@ -168,7 +151,7 @@ describe('decrement()', function() {
     });
 
     it('decrements existing', function () {
-        $cache = makeRedisCache();
+        $cache = Cache::store('symfony_redis');
 
         $cache->put('abc', 1, 10000);
         $cache->decrement('abc');
@@ -177,7 +160,7 @@ describe('decrement()', function() {
     });
 
     it('decrements existing with tag', function () {
-        $cache = makeRedisCache();
+        $cache = Cache::store('symfony_redis');
 
         $cache->tags('tag')->put('abc', 1, 10000);
         $cache->tags('tag')->decrement('abc');
@@ -188,7 +171,7 @@ describe('decrement()', function() {
 
 describe('forever()', function () {
     it('stores value', function () {
-        $cache = makeRedisCache();
+        $cache = Cache::store('symfony_redis');
 
         $cache->forever('abc', 10);
 
@@ -196,7 +179,7 @@ describe('forever()', function () {
     });
 
     it('stores value with tag', function () {
-        $cache = makeRedisCache();
+        $cache = Cache::store('symfony_redis');
 
         $cache->forever('abc', 10);
 
@@ -206,7 +189,7 @@ describe('forever()', function () {
 
 describe('forget()', function () {
     it('does nothing for a non-existent key', function () {
-        $cache = makeRedisCache();
+        $cache = Cache::store('symfony_redis');
 
         $result = $cache->forget('abc');
 
@@ -215,7 +198,7 @@ describe('forget()', function () {
     });
 
     it('does nothing for a non-existent key with tag', function () {
-        $cache = makeRedisCache();
+        $cache = Cache::store('symfony_redis');
 
         $result = $cache->tags('tag')->forget('abc');
 
@@ -224,7 +207,7 @@ describe('forget()', function () {
     });
 
     it('forgets an existing key', function () {
-        $cache = makeRedisCache();
+        $cache = Cache::store('symfony_redis');
 
         $cache->put('abc', 10, 10000);
         $result = $cache->forget('abc');
@@ -234,7 +217,7 @@ describe('forget()', function () {
     });
 
     it('forgets an existing key with tag', function () {
-        $cache = makeRedisCache();
+        $cache = Cache::store('symfony_redis');
 
         $cache->tags('tag')->put('abc', 10, 10000);
         $result = $cache->forget('abc');
@@ -246,7 +229,7 @@ describe('forget()', function () {
 
 describe('flush()', function () {
     it('does nothing if no values', function () {
-        $cache = makeRedisCache();
+        $cache = Cache::store('symfony_redis');
 
         $result = $cache->flush();
 
@@ -256,7 +239,7 @@ describe('flush()', function () {
     });
 
     it('clears all values', function () {
-        $cache = makeRedisCache();
+        $cache = Cache::store('symfony_redis');
 
         $cache->put('abc', 10, 10000);
         $cache->forever('xyz', 10);
@@ -269,7 +252,7 @@ describe('flush()', function () {
     });
 
     it('clears all tagged values when tag is provided', function () {
-        $cache = makeRedisCache()->tags('tag');
+        $cache = Cache::store('symfony_redis')->tags('tag');
 
         $cache->put('abc', 10, 10000);
         $cache->forever('xyz', 10);
@@ -282,7 +265,7 @@ describe('flush()', function () {
     });
 
     it('only clears tagged values when tag is provided', function () {
-        $cache = makeRedisCache();
+        $cache = Cache::store('symfony_redis');
 
         $cache->tags('tag')->put('abc', 'abc', 10000);
         $cache->forever('xyz', 'xyz');
@@ -295,7 +278,7 @@ describe('flush()', function () {
     });
 
     it('clears all tags', function () {
-        $cache = makeRedisCache();
+        $cache = Cache::store('symfony_redis');
 
         $cache->tags('tag1')->put('abc', 'abc', 10000);
         $cache->tags('tag2')->forever('xyz', 'xyz');
