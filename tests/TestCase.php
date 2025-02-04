@@ -5,6 +5,7 @@ namespace Tests;
 use Illuminate\Config\Repository;
 use Illuminate\Foundation\Application;
 use Symfony\Component\Cache\Adapter\ApcuAdapter;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\FilesystemTagAwareAdapter;
 use Symfony\Component\Cache\Adapter\RedisTagAwareAdapter;
 use Trevorpe\LaravelSymfonyCache\Providers\LaravelSymfonyCacheServiceProvider;
@@ -36,6 +37,11 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
             'driver' => 'symfony',
             'adapter' => FilesystemTagAwareAdapter::class,
             'path' => storage_path('framework/cache/data'),
+        ]);
+
+        $config->set('cache.stores.symfony_array', [
+            'driver' => 'symfony',
+            'adapter' => ArrayAdapter::class,
         ]);
 
         /*
