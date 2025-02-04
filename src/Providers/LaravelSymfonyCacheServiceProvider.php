@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\ServiceProvider;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Cache\Adapter\FilesystemTagAwareAdapter;
 use Symfony\Component\Cache\Adapter\RedisAdapter;
@@ -86,6 +87,13 @@ class LaravelSymfonyCacheServiceProvider extends ServiceProvider
             $this->getPrefix($config),
             $this->getDefaultLifetime($config),
             $this->getCachePath($config)
+        );
+    }
+
+    public function createArrayAdapter(array $config): ArrayAdapter
+    {
+        return new ArrayAdapter(
+            $this->getDefaultLifetime($config)
         );
     }
 

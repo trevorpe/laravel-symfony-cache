@@ -34,6 +34,21 @@ name of the Symfony cache adapter you'd like to use.
 
 ### Configuration Examples
 
+#### Array
+
+```php
+// config/cache.php
+
+return [
+    'stores' => [
+        'file' => [
+            'driver' => 'symfony',
+            'adapter' => Symfony\Component\Cache\Adapter\ArrayAdapter::class,
+        ],
+    ]
+]
+```
+
 #### Filesystem
 
 ```php
