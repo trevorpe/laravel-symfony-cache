@@ -33,6 +33,13 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
             'connection' => env('REDIS_CACHE_CONNECTION', 'cache')
         ]);
 
+        $config->set('cache.stores.symfony_redis_with_prefix', [
+            'driver' => 'symfony',
+            'adapter' => RedisTagAwareAdapter::class,
+            'connection' => env('REDIS_CACHE_CONNECTION', 'cache'),
+            'prefix' => 'testing_prefix'
+        ]);
+
         $config->set('cache.stores.symfony_file', [
             'driver' => 'symfony',
             'adapter' => FilesystemTagAwareAdapter::class,
