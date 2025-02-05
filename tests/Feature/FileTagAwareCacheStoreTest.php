@@ -47,21 +47,21 @@ describe('get()', function () {
 });
 
 describe('getMultiple()', function () {
-    it('returns null for all missing keys', function () {
+    it('returns default for all missing keys', function () {
         $cache = Cache::store('symfony_file');
 
-        $results = $cache->getMultiple(['abc', 'xyz']);
+        $results = $cache->getMultiple(['abc', 'xyz'], 'def');
 
-        expect($results)->toEqual(['abc' => null, 'xyz' => null]);
+        expect($results)->toEqual(['abc' => 'def', 'xyz' => 'def']);
     });
 
-    it('returns null for partial missing keys', function () {
+    it('returns default for partial missing keys', function () {
         $cache = Cache::store('symfony_file');
 
         $cache->put('abc', 'abc');
-        $results = $cache->getMultiple(['abc', 'xyz']);
+        $results = $cache->getMultiple(['abc', 'xyz'], 'def');
 
-        expect($results)->toEqual(['abc' => 'abc', 'xyz' => null]);
+        expect($results)->toEqual(['abc' => 'abc', 'xyz' => 'def']);
     });
 
     it('returns values for all available keys', function () {
@@ -74,6 +74,61 @@ describe('getMultiple()', function () {
         $results = $cache->getMultiple(['abc', 'xyz']);
 
         expect($results)->toEqual(['abc' => 'abc', 'xyz' => 'xyz']);
+    });
+
+    it('returns values for all available keys with colons', function () {
+        $cache = Cache::store('symfony_file');
+        $cache->setMultiple([
+            'a:b:c' => 'a:b:c',
+            'x:y:z' => 'x:y:z'
+        ]);
+
+        $results = $cache->getMultiple(['a:b:c', 'x:y:z']);
+
+        expect($results)->toEqual(['a:b:c' => 'a:b:c', 'x:y:z' => 'x:y:z']);
+    });
+});
+
+describe('many()', function () {
+    it('returns default for all missing keys', function () {
+        $cache = Cache::store('symfony_file');
+
+        $results = $cache->many(['abc' => 'def', 'xyz' => 'def']);
+
+        expect($results)->toEqual(['abc' => 'def', 'xyz' => 'def']);
+    });
+
+    it('returns null for partial missing keys', function () {
+        $cache = Cache::store('symfony_file');
+
+        $cache->put('abc', 'abc');
+        $results = $cache->many(['abc' => 'def', 'xyz' => 'def']);
+
+        expect($results)->toEqual(['abc' => 'abc', 'xyz' => 'def']);
+    });
+
+    it('returns values for all available keys', function () {
+        $cache = Cache::store('symfony_file');
+        $cache->setMultiple([
+            'abc' => 'abc',
+            'xyz' => 'xyz'
+        ]);
+
+        $results = $cache->many(['abc', 'xyz']);
+
+        expect($results)->toEqual(['abc' => 'abc', 'xyz' => 'xyz']);
+    });
+
+    it('returns values for all available keys with colons', function () {
+        $cache = Cache::store('symfony_file');
+        $cache->setMultiple([
+            'a:b:c' => 'a:b:c',
+            'x:y:z' => 'x:y:z'
+        ]);
+
+        $results = $cache->many(['a:b:c', 'x:y:z']);
+
+        expect($results)->toEqual(['a:b:c' => 'a:b:c', 'x:y:z' => 'x:y:z']);
     });
 });
 

@@ -30,7 +30,7 @@ trait SymfonyCacheTrait
 
         $result = [];
         foreach ($items as $key => $item) {
-            $result[$key] = $item->get();
+            $result[CacheKey::fromPsrKey($key)] = $item->get();
         }
 
         return $result;
