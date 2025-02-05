@@ -75,6 +75,18 @@ describe('getMultiple()', function () {
 
         expect($results)->toEqual(['abc' => 'abc', 'xyz' => 'xyz']);
     });
+
+    it('returns values for all available keys with colons', function () {
+        $cache = Cache::store('symfony_redis');
+        $cache->setMultiple([
+            'a:b:c' => 'a:b:c',
+            'x:y:z' => 'x:y:z'
+        ]);
+
+        $results = $cache->getMultiple(['a:b:c', 'x:y:z']);
+
+        expect($results)->toEqual(['a:b:c' => 'a:b:c', 'x:y:z' => 'x:y:z']);
+    });
 });
 
 describe('set()', function () {
