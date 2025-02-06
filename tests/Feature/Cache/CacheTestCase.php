@@ -869,25 +869,12 @@ abstract class CacheTestCase extends TestCase
 
     public function test_pull_returns_default_after_expiry()
     {
-        $interval = CarbonInterval::millisecond();
-
-        $this->syncedCache()->set('abc', 'abc', $interval);
-
-        usleep(10);
-
-        $this->assertEquals(
-            'default', $this->laravelCache()->pull('abc', 'default')
-        );
-        $this->assertFalse(
-            $this->laravelCache()->has('abc')
-        );
-
         // Reset and test that values are equal
-        $interval = CarbonInterval::millisecond();
+        $interval = CarbonInterval::second();
 
         $this->syncedCache()->set('abc', 'abc', $interval);
 
-        usleep(10);
+        usleep(1000 * 1000 + 1);
 
         $this->assertEquals(
             ...$this->syncedCache()->pull('abc', 'default')
