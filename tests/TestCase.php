@@ -30,7 +30,8 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
         $config->set('cache.stores.symfony_redis', [
             'driver' => 'symfony',
             'adapter' => RedisTagAwareAdapter::class,
-            'connection' => env('REDIS_CACHE_CONNECTION', 'cache')
+            'connection' => env('REDIS_CACHE_CONNECTION', 'cache'),
+            'prefix' => 'symfony'
         ]);
 
         $config->set('cache.stores.symfony_file', [
