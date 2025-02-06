@@ -37,6 +37,13 @@ abstract class CacheTestCase extends TestCase
 
     abstract protected function symfonyCache(): Repository;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->syncedCache()->clear();
+    }
+
     /**
      * @return Repository
      */
