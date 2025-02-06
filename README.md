@@ -7,9 +7,9 @@ inspired by the [alternative-laravel-cache](https://github.com/swayok/alternativ
 project.
 
 > [!CAUTION]
-> Symfony's Cache component treats tags differently than Laravel.
+> Symfony's Cache component behaves differently than Laravel's.
 > 
-> Read the [Tag Behavior](#tag-behavior) section before replacing the default
+> Read the [Tag Behavior](#tag-behavior) and [Clear Behavior](#clear-behavior) sections before replacing the default
 > Laravel cache stores with this library, and consider how a different tag behavior
 > could affect any other libraries that you use.
 
@@ -167,3 +167,11 @@ Cache::flush(); // Flushes all cache entries normally
 
 Cache::get('test-key3'); // Value will have been removed by any of the above flush() calls
 ```
+
+## Clear Behavior
+
+The `clear()` method of Laravel will clear the entire cache when using Redis as the driver (and possibly others).
+
+With Symfony's cache system, `clear()` will only clear keys matching the prefix and namespace. This is a bit less
+dangerous, but one should be still be cautious when clearing a cache store to ensure you are only deleting
+the intended values.
