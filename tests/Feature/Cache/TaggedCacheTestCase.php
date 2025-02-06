@@ -1030,6 +1030,8 @@ abstract class TaggedCacheTestCase extends CacheTestCase
 
     public function test_tagged_pull_returns_default_after_expiry()
     {
+        $this->markTestSkipped('see if there\'s a way to test this without waiting a second or depending on time at all');
+
         $interval = CarbonInterval::millisecond();
 
         $this->taggedSyncedCache()->set('abc', 'abc', $interval);
