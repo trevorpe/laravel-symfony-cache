@@ -911,19 +911,11 @@ abstract class TaggedCacheTestCase extends CacheTestCase
     /*
      * clear()/flush()
      */
-    /**
-     * @dataProvider clearAndFlushProvider
-     */
-    public function test_tagged_clear_clears_all_existing_values($clearMethod)
+    public function test_tagged_clear_clears_all_existing_values()
     {
-        $this->markTestSkippedWhen(
-            $clearMethod === 'flush',
-            'flush() with a RedisTaggedCache doesn\'t seem to be working in Laravel'
-        );
-
         $this->taggedSyncedCache()->set('abc', 'abc');
 
-        $this->taggedSyncedCache()->{$clearMethod}();
+        $this->taggedSyncedCache()->clear();
 
         $this->assertEquals(
             'default', $this->taggedLaravelCache()->get('abc', 'default')
@@ -931,6 +923,74 @@ abstract class TaggedCacheTestCase extends CacheTestCase
 
         $this->assertEquals(
             ...$this->taggedSyncedCache()->get('abc', 'default')
+        );
+    }
+
+    public function test_tagged_flush_clears_all_tagged_entries()
+    {
+        $this->taggedSymfonyCache()->set('abc', 'abc');
+        $this->taggedSymfonyCache()->set('xyz', 'xyz');
+
+        $this->taggedSymfonyCache()->flush();
+
+        $this->assertEquals(
+            'default', $this->taggedSymfonyCache()->get('abc', 'default')
+        );
+        $this->assertEquals(
+            'default', $this->taggedSymfonyCache()->get('xyz', 'default')
+        );
+    }
+
+    public function test_tagged_flush_only_clears_entries_with_tags_scoped_to_repository_instance()
+    {
+        $this->taggedSymfonyCache(['tag1'])->set('abc', 'abc');
+        $this->taggedSymfonyCache(['tag2'])->set('xyz', 'xyz');
+
+        $this->taggedSymfonyCache(['tag1'])->flush();
+
+        $this->assertEquals(
+            'default', $this->taggedSymfonyCache()->get('abc', 'default')
+        );
+        $this->assertEquals(
+            'xyz', $this->taggedSymfonyCache()->get('xyz', 'default')
+        );
+    }
+
+    public function test_tagged_flush_clears_all_entries_with_tag_on_the_repository_instance()
+    {
+        $this->taggedSymfonyCache(['tag1'])->set('abc', 'abc');
+        $this->taggedSymfonyCache(['tag1', 'tag2'])->set('xyz', 'xyz');
+
+        /*
+         * This behavior differs from Laravel's, where Laravel tags are more of a hierarchy rather than
+         * tags. This is the intended behavior from Symfony.
+         */
+        $this->taggedSymfonyCache(['tag1'])->flush();
+
+        $this->assertEquals(
+            'default', $this->taggedSymfonyCache()->get('abc', 'default')
+        );
+        $this->assertEquals(
+            'default', $this->taggedSymfonyCache()->get('xyz', 'default')
+        );
+    }
+
+    public function test_tagged_flush_clears_all_entries_with_either_tag_on_the_repository_instance()
+    {
+        $this->taggedSymfonyCache(['tag1'])->set('abc', 'abc');
+        $this->taggedSymfonyCache(['tag2'])->set('xyz', 'xyz');
+
+        /*
+         * This behavior differs from Laravel's, where Laravel tags are more of a hierarchy rather than
+         * tags. This is the intended behavior from Symfony.
+         */
+        $this->taggedSymfonyCache(['tag1', 'tag2'])->flush();
+
+        $this->assertEquals(
+            'default', $this->taggedSymfonyCache()->get('abc', 'default')
+        );
+        $this->assertEquals(
+            'default', $this->taggedSymfonyCache()->get('xyz', 'default')
         );
     }
 }
