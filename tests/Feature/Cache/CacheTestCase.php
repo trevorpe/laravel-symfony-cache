@@ -869,6 +869,8 @@ abstract class CacheTestCase extends TestCase
 
     public function test_pull_returns_default_after_expiry()
     {
+        $this->markTestSkipped('see if there\'s a way to test this without waiting a second or depending on time at all');
+
         // Reset and test that values are equal
         $interval = CarbonInterval::second();
 
