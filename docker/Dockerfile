@@ -6,3 +6,8 @@ RUN pecl install redis && docker-php-ext-enable redis
 RUN pecl install xdebug-3.4.1 && docker-php-ext-enable xdebug
 
 RUN apk del pcre-dev linux-headers ${PHPIZE_DEPS} && rm -rf /tmp/pear
+
+# INSTALL COMPOSER
+RUN curl -s https://getcomposer.org/installer | php \
+    && chmod u+x composer.phar \
+    && mv composer.phar /usr/local/bin/composer
