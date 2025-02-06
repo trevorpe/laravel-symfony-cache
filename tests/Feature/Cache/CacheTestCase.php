@@ -54,32 +54,32 @@ abstract class CacheTestCase extends TestCase
 
     public static function setAndPutProvider(): array
     {
-        return [['set'], ['put']];
+        return ['set()' => ['set'], 'put()' => ['put']];
     }
 
     public static function deleteAndForgetProvider(): array
     {
-        return [['delete'], ['forget']];
+        return ['delete()' => ['delete'], 'forget()' => ['forget']];
     }
 
     public static function setMultipleAndPutProvider(): array
     {
-        return [['setMultiple'], ['put'], ['putMany']];
+        return ['setMultiple()' => ['setMultiple'], 'put()' => ['put'], 'putMany()' => ['putMany']];
     }
 
     public static function rememberForeverAndSearProvider(): array
     {
-        return [['rememberForever'], ['sear']];
+        return ['rememberForever()' => ['rememberForever'], 'sear()' => ['sear']];
     }
 
     public static function hasAndMissingProvider(): array
     {
-        return [['has'], ['missing']];
+        return ['has()' => ['has'], 'missing()' => ['missing']];
     }
 
     public static function clearAndFlushProvider(): array
     {
-        return [['clear'], ['flush']];
+        return ['clear()' => ['clear'], 'flush()' => ['flush']];
     }
 
     /*
