@@ -40,6 +40,10 @@ abstract class TaggedCacheTestCase extends CacheTestCase
         $this->assertEquals(
             ...$this->taggedSyncedCache()->get('abc')
         );
+
+        // The Symfony cache should also be able to get the value since its tag system isn't
+        // hierarchical.
+        $this->assertEquals('abc', $this->symfonyCache()->get('abc'));
     }
 
     /**
@@ -54,6 +58,10 @@ abstract class TaggedCacheTestCase extends CacheTestCase
         $this->assertEquals(
             ...$this->taggedSyncedCache()->get('abc')
         );
+
+        // The Symfony cache should also be able to get the value since its tag system isn't
+        // hierarchical.
+        $this->assertEquals('abc', $this->symfonyCache()->get('abc'));
     }
 
     /**
@@ -72,6 +80,9 @@ abstract class TaggedCacheTestCase extends CacheTestCase
         $this->assertEquals(
             ...$this->taggedSyncedCache()->get('abc')
         );
+
+        // We also expect it to be applied without tags on the Symfony side
+        $this->assertNull($this->symfonyCache()->get('abc'));
     }
 
     /**
@@ -86,6 +97,9 @@ abstract class TaggedCacheTestCase extends CacheTestCase
         $this->assertEquals(
             ...$this->taggedSyncedCache()->get('abc')
         );
+
+        // We also expect it to be applied without tags on the Symfony side
+        $this->assertNull($this->symfonyCache()->get('abc'));
     }
 
     /**
@@ -100,6 +114,9 @@ abstract class TaggedCacheTestCase extends CacheTestCase
         $this->assertEquals(
             ...$this->taggedSyncedCache()->get('abc')
         );
+
+        // We also expect it to be applied without tags on the Symfony side
+        $this->assertNull($this->symfonyCache()->get('abc'));
     }
 
     /*
@@ -116,6 +133,11 @@ abstract class TaggedCacheTestCase extends CacheTestCase
         $this->assertEquals(
             ...$this->taggedSyncedCache()->get('abc')
         );
+
+        // Symfony should still have the value even untagged
+        $this->assertEquals(
+            'abc', $this->symfonyCache()->get('abc')
+        );
     }
 
     public function test_tagged_add_does_not_overwrite_existing_value()
@@ -130,6 +152,11 @@ abstract class TaggedCacheTestCase extends CacheTestCase
         $this->assertEquals(
             ...$this->taggedSyncedCache()->get('abc')
         );
+
+        // Symfony should still have the value even untagged
+        $this->assertEquals(
+            'abc', $this->symfonyCache()->get('abc')
+        );
     }
 
     public function test_tagged_add_does_not_add_if_ttl_is_zero()
@@ -143,6 +170,11 @@ abstract class TaggedCacheTestCase extends CacheTestCase
         $this->assertEquals(
             ...$this->taggedSyncedCache()->get('abc', 'default')
         );
+
+        // Symfony should not have the tag untagged
+        $this->assertEquals(
+            'default', $this->symfonyCache()->get('abc', 'default')
+        );
     }
 
     public function test_tagged_add_does_not_add_if_ttl_is_negative()
@@ -155,6 +187,10 @@ abstract class TaggedCacheTestCase extends CacheTestCase
 
         $this->assertEquals(
             ...$this->taggedSyncedCache()->get('abc', 'default')
+        );
+
+        $this->assertEquals(
+            'default', $this->symfonyCache()->get('abc', 'default')
         );
     }
 
@@ -206,6 +242,11 @@ abstract class TaggedCacheTestCase extends CacheTestCase
         $this->assertEquals(
             ...$this->taggedSyncedCache()->get('abc')
         );
+
+        // Symfony should still have the value even untagged
+        $this->assertEquals(
+            10, $this->symfonyCache()->get('abc')
+        );
     }
 
     public function test_tagged_increment_increments_existing_value_to_increment()
@@ -220,6 +261,11 @@ abstract class TaggedCacheTestCase extends CacheTestCase
         $this->assertEquals(
             ...$this->taggedSyncedCache()->get('abc')
         );
+
+        // Symfony should still have the value even untagged
+        $this->assertEquals(
+            11, $this->symfonyCache()->get('abc')
+        );
     }
 
     public function test_tagged_decrement_sets_unset_value_to_decrement()
@@ -232,6 +278,11 @@ abstract class TaggedCacheTestCase extends CacheTestCase
 
         $this->assertEquals(
             ...$this->taggedSyncedCache()->get('abc')
+        );
+
+        // Symfony should still have the value even untagged
+        $this->assertEquals(
+            -10, $this->symfonyCache()->get('abc')
         );
     }
 
@@ -246,6 +297,11 @@ abstract class TaggedCacheTestCase extends CacheTestCase
 
         $this->assertEquals(
             ...$this->taggedSyncedCache()->get('abc')
+        );
+
+        // Symfony should still have the value even untagged
+        $this->assertEquals(
+            -9, $this->symfonyCache()->get('abc')
         );
     }
 
@@ -263,6 +319,11 @@ abstract class TaggedCacheTestCase extends CacheTestCase
         $this->assertEquals(
             ...$this->taggedSyncedCache()->get('abc')
         );
+
+        // Symfony should still have the value even untagged
+        $this->assertEquals(
+            'abc', $this->symfonyCache()->get('abc')
+        );
     }
 
     /*
@@ -279,6 +340,11 @@ abstract class TaggedCacheTestCase extends CacheTestCase
         $this->assertEquals(
             ...$this->taggedSyncedCache()->get('abc', 'default')
         );
+
+        // Symfony should still have the value even untagged
+        $this->assertEquals(
+            'abc', $this->symfonyCache()->get('abc', 'default')
+        );
     }
 
     public function test_tagged_remember_does_not_store_value_when_ttl_is_zero()
@@ -292,6 +358,11 @@ abstract class TaggedCacheTestCase extends CacheTestCase
         $this->assertEquals(
             ...$this->taggedSyncedCache()->get('abc', 'default')
         );
+
+        // Symfony should also not have the value
+        $this->assertEquals(
+            'default', $this->symfonyCache()->get('abc', 'default')
+        );
     }
 
     public function test_tagged_remember_does_not_store_value_when_ttl_is_negative()
@@ -304,6 +375,11 @@ abstract class TaggedCacheTestCase extends CacheTestCase
 
         $this->assertEquals(
             ...$this->taggedSyncedCache()->get('abc', 'default')
+        );
+
+        // Symfony should also not have the value
+        $this->assertEquals(
+            'default', $this->symfonyCache()->get('abc', 'default')
         );
     }
 
@@ -323,6 +399,11 @@ abstract class TaggedCacheTestCase extends CacheTestCase
 
         $this->assertEquals(
             ...$this->taggedSyncedCache()->get('abc', 'default')
+        );
+
+        // Symfony should have the value even untagged
+        $this->assertEquals(
+            'abc', $this->symfonyCache()->get('abc', 'default')
         );
     }
 
@@ -350,6 +431,14 @@ abstract class TaggedCacheTestCase extends CacheTestCase
         );
 
         $this->assertFalse($getterExecuted);
+
+        // Reset
+        $getterExecuted = false;
+
+        // Symfony should have the value even untagged
+        $this->assertEquals(
+            'abc', $this->symfonyCache()->{$rememberMethod}('abc', $getter)
+        );
     }
 
     /*
@@ -367,6 +456,11 @@ abstract class TaggedCacheTestCase extends CacheTestCase
         $this->assertEquals(
             ...$this->taggedSyncedCache()->get('abc')
         );
+
+        // Symfony should be the same
+        $this->assertNull(
+            $this->symfonyCache()->get('abc')
+        );
     }
 
     /**
@@ -383,6 +477,11 @@ abstract class TaggedCacheTestCase extends CacheTestCase
         $this->assertEquals(
             ...$this->taggedSyncedCache()->get('abc')
         );
+
+        // Symfony should be the same
+        $this->assertNull(
+            $this->symfonyCache()->get('abc')
+        );
     }
 
     /**
@@ -398,6 +497,11 @@ abstract class TaggedCacheTestCase extends CacheTestCase
 
         $this->assertEquals(
             ...$this->taggedSyncedCache()->get('abc')
+        );
+
+        // Symfony should be the same
+        $this->assertNull(
+            $this->symfonyCache()->get('abc')
         );
     }
 
@@ -419,6 +523,11 @@ abstract class TaggedCacheTestCase extends CacheTestCase
         $this->assertEquals(
             ...$this->taggedSyncedCache()->get('abc')
         );
+
+        // Symfony should be the same
+        $this->assertNull(
+            $this->symfonyCache()->get('abc')
+        );
     }
 
     /*
@@ -430,10 +539,15 @@ abstract class TaggedCacheTestCase extends CacheTestCase
             ['abc' => 'default', 'xyz' => 'default'],
             $this->taggedLaravelCache()->getMultiple(['abc', 'xyz'], 'default')
         );
+        $this->assertEquals(
+            ['abc' => 'default', 'xyz' => 'default'],
+            $this->symfonyCache()->getMultiple(['abc', 'xyz'], 'default')
+        );
 
         $this->assertEquals(
             ...$this->taggedSyncedCache()->getMultiple(['abc', 'xyz'], 'default')
         );
+
     }
 
     public function test_tagged_get_multiple_returns_default_for_one_unset()
@@ -443,6 +557,10 @@ abstract class TaggedCacheTestCase extends CacheTestCase
         $this->assertEquals(
             ['abc' => 'abc', 'xyz' => 'default'],
             $this->taggedLaravelCache()->getMultiple(['abc', 'xyz'], 'default')
+        );
+        $this->assertEquals(
+            ['abc' => 'abc', 'xyz' => 'default'],
+            $this->symfonyCache()->getMultiple(['abc', 'xyz'], 'default')
         );
 
         $this->assertEquals(
@@ -469,6 +587,10 @@ abstract class TaggedCacheTestCase extends CacheTestCase
             ['abc' => 'abc', 'xyz' => 'xyz'],
             $this->taggedLaravelCache()->getMultiple(['abc', 'xyz'], 'default')
         );
+        $this->assertEquals(
+            ['abc' => 'abc', 'xyz' => 'xyz'],
+            $this->symfonyCache()->getMultiple(['abc', 'xyz'], 'default')
+        );
 
         $this->assertEquals(
             ...$this->taggedSyncedCache()->getMultiple(['abc', 'xyz'], 'default')
@@ -486,6 +608,10 @@ abstract class TaggedCacheTestCase extends CacheTestCase
         $this->assertEquals(
             ['abc' => 'abc', 'xyz' => 'default'],
             $this->taggedLaravelCache()->getMultiple(['abc', 'xyz'], 'default')
+        );
+        $this->assertEquals(
+            ['abc' => 'abc', 'xyz' => 'default'],
+            $this->symfonyCache()->getMultiple(['abc', 'xyz'], 'default')
         );
 
         $this->assertEquals(
@@ -512,6 +638,10 @@ abstract class TaggedCacheTestCase extends CacheTestCase
             ['abc' => 'abc', 'xyz' => 'xyz'],
             $this->taggedLaravelCache()->getMultiple(['abc', 'xyz'], 'default')
         );
+        $this->assertEquals(
+            ['abc' => 'abc', 'xyz' => 'xyz'],
+            $this->symfonyCache()->getMultiple(['abc', 'xyz'], 'default')
+        );
 
         $this->assertEquals(
             ...$this->taggedSyncedCache()->getMultiple(['abc', 'xyz'], 'default')
@@ -536,6 +666,10 @@ abstract class TaggedCacheTestCase extends CacheTestCase
         $this->assertEquals(
             ['abc' => 'default', 'xyz' => 'default'],
             $this->taggedLaravelCache()->getMultiple(['abc', 'xyz'], 'default')
+        );
+        $this->assertEquals(
+            ['abc' => 'default', 'xyz' => 'default'],
+            $this->symfonyCache()->getMultiple(['abc', 'xyz'], 'default')
         );
 
         $this->assertEquals(
@@ -562,6 +696,10 @@ abstract class TaggedCacheTestCase extends CacheTestCase
             ['abc' => 'default', 'xyz' => 'default'],
             $this->taggedLaravelCache()->getMultiple(['abc', 'xyz'], 'default')
         );
+        $this->assertEquals(
+            ['abc' => 'default', 'xyz' => 'default'],
+            $this->symfonyCache()->getMultiple(['abc', 'xyz'], 'default')
+        );
 
         $this->assertEquals(
             ...$this->taggedSyncedCache()->getMultiple(['abc', 'xyz'], 'default')
@@ -577,6 +715,10 @@ abstract class TaggedCacheTestCase extends CacheTestCase
             ['abc' => null, 'xyz' => null],
             $this->taggedLaravelCache()->many(['abc', 'xyz'])
         );
+        $this->assertEquals(
+            ['abc' => null, 'xyz' => null],
+            $this->symfonyCache()->many(['abc', 'xyz'])
+        );
 
         $this->assertEquals(
             ...$this->taggedSyncedCache()->many(['abc', 'xyz'])
@@ -588,6 +730,10 @@ abstract class TaggedCacheTestCase extends CacheTestCase
         $this->assertEquals(
             ['abc' => 'default', 'xyz' => 'default'],
             $this->taggedLaravelCache()->many(['abc' => 'default', 'xyz' => 'default'])
+        );
+        $this->assertEquals(
+            ['abc' => 'default', 'xyz' => 'default'],
+            $this->symfonyCache()->many(['abc' => 'default', 'xyz' => 'default'])
         );
 
         $this->assertEquals(
@@ -602,6 +748,10 @@ abstract class TaggedCacheTestCase extends CacheTestCase
         $this->assertEquals(
             ['abc' => 'abc', 'xyz' => 'default'],
             $this->taggedLaravelCache()->many(['abc' => 'default', 'xyz' => 'default'])
+        );
+        $this->assertEquals(
+            ['abc' => 'abc', 'xyz' => 'default'],
+            $this->symfonyCache()->many(['abc' => 'default', 'xyz' => 'default'])
         );
 
         $this->assertEquals(
@@ -628,6 +778,10 @@ abstract class TaggedCacheTestCase extends CacheTestCase
             ['abc' => 'abc', 'xyz' => 'xyz'],
             $this->taggedLaravelCache()->many(['abc' => 'default', 'xyz' => 'default'])
         );
+        $this->assertEquals(
+            ['abc' => 'abc', 'xyz' => 'xyz'],
+            $this->symfonyCache()->many(['abc' => 'default', 'xyz' => 'default'])
+        );
 
         $this->assertEquals(
             ...$this->taggedSyncedCache()->many(['abc' => 'default', 'xyz' => 'default'])
@@ -646,6 +800,10 @@ abstract class TaggedCacheTestCase extends CacheTestCase
             ['abc' => 'abc', 'xyz' => 'default'],
             $this->taggedLaravelCache()->many(['abc' => 'default', 'xyz' => 'default'])
         );
+        $this->assertEquals(
+            ['abc' => 'abc', 'xyz' => 'default'],
+            $this->symfonyCache()->many(['abc' => 'default', 'xyz' => 'default'])
+        );
 
         $this->assertEquals(
             ...$this->taggedSyncedCache()->many(['abc' => 'default', 'xyz' => 'default'])
@@ -663,6 +821,10 @@ abstract class TaggedCacheTestCase extends CacheTestCase
             ['abc' => 'default', 'xyz' => 'default'],
             $this->taggedLaravelCache()->getMultiple(['abc', 'xyz'], 'default')
         );
+        $this->assertEquals(
+            ['abc' => 'default', 'xyz' => 'default'],
+            $this->symfonyCache()->getMultiple(['abc', 'xyz'], 'default')
+        );
 
         $this->assertEquals(
             ...$this->taggedSyncedCache()->getMultiple(['abc', 'xyz'], 'default')
@@ -678,6 +840,10 @@ abstract class TaggedCacheTestCase extends CacheTestCase
         $this->assertEquals(
             ['abc' => 'default', 'xyz' => 'default'],
             $this->taggedLaravelCache()->getMultiple(['abc', 'xyz'], 'default')
+        );
+        $this->assertEquals(
+            ['abc' => 'default', 'xyz' => 'default'],
+            $this->symfonyCache()->getMultiple(['abc', 'xyz'], 'default')
         );
 
         $this->assertEquals(
@@ -698,6 +864,10 @@ abstract class TaggedCacheTestCase extends CacheTestCase
             ['abc' => 'default', 'xyz' => 'default'],
             $this->taggedLaravelCache()->getMultiple(['abc', 'xyz'], 'default')
         );
+        $this->assertEquals(
+            ['abc' => 'default', 'xyz' => 'default'],
+            $this->symfonyCache()->getMultiple(['abc', 'xyz'], 'default')
+        );
 
         $this->assertEquals(
             ...$this->taggedSyncedCache()->getMultiple(['abc', 'xyz'], 'default')
@@ -716,6 +886,10 @@ abstract class TaggedCacheTestCase extends CacheTestCase
             $hasMethod !== 'has',
             $this->taggedLaravelCache()->{$hasMethod}('abc')
         );
+        $this->assertEquals(
+            $hasMethod !== 'has',
+            $this->symfonyCache()->{$hasMethod}('abc')
+        );
 
         $this->assertEquals(
             ...$this->taggedSyncedCache()->{$hasMethod}('abc')
@@ -732,6 +906,10 @@ abstract class TaggedCacheTestCase extends CacheTestCase
         $this->assertEquals(
             $hasMethod === 'has',
             $this->taggedLaravelCache()->{$hasMethod}('abc')
+        );
+        $this->assertEquals(
+            $hasMethod === 'has',
+            $this->symfonyCache()->{$hasMethod}('abc')
         );
 
         $this->assertEquals(
@@ -750,6 +928,10 @@ abstract class TaggedCacheTestCase extends CacheTestCase
             $hasMethod === 'has',
             $this->taggedLaravelCache()->{$hasMethod}('abc')
         );
+        $this->assertEquals(
+            $hasMethod === 'has',
+            $this->symfonyCache()->{$hasMethod}('abc')
+        );
 
         $this->assertEquals(
             ...$this->taggedSyncedCache()->{$hasMethod}('abc')
@@ -766,6 +948,10 @@ abstract class TaggedCacheTestCase extends CacheTestCase
         $this->assertEquals(
             $hasMethod !== 'has',
             $this->taggedLaravelCache()->{$hasMethod}('abc')
+        );
+        $this->assertEquals(
+            $hasMethod !== 'has',
+            $this->symfonyCache()->{$hasMethod}('abc')
         );
 
         $this->assertEquals(
@@ -784,6 +970,10 @@ abstract class TaggedCacheTestCase extends CacheTestCase
             $hasMethod !== 'has',
             $this->taggedLaravelCache()->{$hasMethod}('abc')
         );
+        $this->assertEquals(
+            $hasMethod !== 'has',
+            $this->symfonyCache()->{$hasMethod}('abc')
+        );
 
         $this->assertEquals(
             ...$this->taggedSyncedCache()->{$hasMethod}('abc')
@@ -797,6 +987,9 @@ abstract class TaggedCacheTestCase extends CacheTestCase
     {
         $this->assertEquals(
             'default', $this->taggedLaravelCache()->pull('abc', 'default')
+        );
+        $this->assertEquals(
+            'default', $this->symfonyCache()->pull('abc', 'default')
         );
 
         $this->assertEquals(
@@ -813,6 +1006,15 @@ abstract class TaggedCacheTestCase extends CacheTestCase
         );
         $this->assertFalse(
             $this->taggedLaravelCache()->has('abc')
+        );
+
+        $this->taggedSyncedCache()->set('abc', 'abc', 60);
+
+        $this->assertEquals(
+            'abc', $this->symfonyCache()->pull('abc', 'default')
+        );
+        $this->assertFalse(
+            $this->symfonyCache()->has('abc')
         );
 
         // Reset and test that values are equal
@@ -839,6 +1041,17 @@ abstract class TaggedCacheTestCase extends CacheTestCase
         );
         $this->assertFalse(
             $this->taggedLaravelCache()->has('abc')
+        );
+
+        $this->taggedSyncedCache()->set('abc', 'abc', $interval);
+
+        usleep(10);
+
+        $this->assertEquals(
+            'default', $this->symfonyCache()->pull('abc', 'default')
+        );
+        $this->assertFalse(
+            $this->symfonyCache()->has('abc')
         );
 
         // Reset and test that values are equal
@@ -869,6 +1082,17 @@ abstract class TaggedCacheTestCase extends CacheTestCase
             $this->taggedLaravelCache()->has('abc')
         );
 
+        $this->taggedSyncedCache()->set('abc', 'abc', 0);
+
+        usleep(10);
+
+        $this->assertEquals(
+            'default', $this->symfonyCache()->pull('abc', 'default')
+        );
+        $this->assertFalse(
+            $this->symfonyCache()->has('abc')
+        );
+
         // Reset and test that values are equal
         $this->taggedSyncedCache()->set('abc', 'abc', 0);
 
@@ -895,6 +1119,17 @@ abstract class TaggedCacheTestCase extends CacheTestCase
             $this->taggedLaravelCache()->has('abc')
         );
 
+        $this->taggedSyncedCache()->set('abc', 'abc', -1);
+
+        usleep(10);
+
+        $this->assertEquals(
+            'default', $this->symfonyCache()->pull('abc', 'default')
+        );
+        $this->assertFalse(
+            $this->symfonyCache()->has('abc')
+        );
+
         // Reset and test that values are equal
         $this->taggedSyncedCache()->set('abc', 'abc', -1);
 
@@ -919,6 +1154,9 @@ abstract class TaggedCacheTestCase extends CacheTestCase
 
         $this->assertEquals(
             'default', $this->taggedLaravelCache()->get('abc', 'default')
+        );
+        $this->assertEquals(
+            'default', $this->symfonyCache()->get('abc', 'default')
         );
 
         $this->assertEquals(
