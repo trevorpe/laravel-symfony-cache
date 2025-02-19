@@ -4,9 +4,9 @@ namespace Tests\Feature\Cache\Redis;
 
 use Illuminate\Cache\Repository;
 use Illuminate\Support\Facades\Cache;
-use Tests\Feature\Cache\CacheTestCase;
+use Tests\Feature\Cache\TaggedCacheTestCase;
 
-class RedisCacheTest extends CacheTestCase
+class TagAwareRedisCacheTest extends TaggedCacheTestCase
 {
 
     protected function laravelCache(): Repository
@@ -16,6 +16,6 @@ class RedisCacheTest extends CacheTestCase
 
     protected function symfonyCache(): Repository
     {
-        return Cache::store('symfony_redis');
+        return Cache::store('symfony_tag_aware_redis');
     }
 }

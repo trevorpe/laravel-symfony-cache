@@ -12,6 +12,7 @@ use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Cache\Adapter\FilesystemTagAwareAdapter;
 use Symfony\Component\Cache\Adapter\RedisAdapter;
 use Symfony\Component\Cache\Adapter\RedisTagAwareAdapter;
+use Symfony\Component\Cache\Adapter\TagAwareAdapter;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 use Trevorpe\LaravelSymfonyCache\Cache\SymfonyCacheStore;
 use Trevorpe\LaravelSymfonyCache\Cache\SymfonyTagAwareCacheStore;
@@ -51,7 +52,14 @@ class LaravelSymfonyCacheServiceProvider extends ServiceProvider
             throw new \ValueError("$adapterBasename is not a supported Symfony adapter");
         }
 
-        return $this->app->call([$this, $method], ['config' => $config]);
+        $adapterInstance = $this->app->call([$this, $method], ['config' => $config]);
+
+        $isTagAware = $config['tag_aware'] ?? false;
+        if ($isTagAware && !is_a($adapterInstance, TagAwareAdapterInterface::class)) {
+            $adapterInstance = new TagAwareAdapter($adapterInstance);
+        }
+
+        return $adapterInstance;
     }
 
     public function createRedisTagAwareAdapter(array $config): RedisTagAwareAdapter
