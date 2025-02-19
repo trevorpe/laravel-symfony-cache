@@ -47,6 +47,16 @@ class LaravelSymfonyCacheServiceProvider extends ServiceProvider
             );
         }
 
+        // If there are more efficient versions of the requested tag-aware adapter, re-map
+        $isTagAware = $config['tag_aware'] ?? false;
+        if ($isTagAware && !is_a($adapter, TagAwareAdapterInterface::class)) {
+            $adapter = match ($adapter) {
+                RedisAdapter::class => RedisTagAwareAdapter::class,
+                FilesystemAdapter::class => FilesystemTagAwareAdapter::class,
+                default => $adapter
+            };
+        }
+
         $adapterBasename = class_basename($adapter);
         if (!method_exists($this, $method = "create$adapterBasename")) {
             throw new \ValueError("$adapterBasename is not a supported Symfony adapter");
@@ -54,7 +64,8 @@ class LaravelSymfonyCacheServiceProvider extends ServiceProvider
 
         $adapterInstance = $this->app->call([$this, $method], ['config' => $config]);
 
-        $isTagAware = $config['tag_aware'] ?? false;
+        // If the adapter was not remapped to a more efficient tag-aware adapter above,
+        // we then try to decorate the adapter with the general tag-aware adapter
         if ($isTagAware && !is_a($adapterInstance, TagAwareAdapterInterface::class)) {
             $adapterInstance = new TagAwareAdapter($adapterInstance);
         }

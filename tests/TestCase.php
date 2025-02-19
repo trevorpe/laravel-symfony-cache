@@ -36,6 +36,14 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
             'prefix' => 'symfony'
         ]);
 
+        $config->set('cache.stores.symfony_inefficient_tag_aware_redis', [
+            'driver' => 'symfony',
+            'adapter' => RedisAdapter::class,
+            'connection' => env('REDIS_CACHE_CONNECTION', 'cache'),
+            'prefix' => 'symfony',
+            'tag_aware' => true
+        ]);
+
         $config->set('cache.stores.symfony_tag_aware_redis', [
             'driver' => 'symfony',
             'adapter' => RedisTagAwareAdapter::class,
@@ -50,6 +58,12 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
         ]);
 
         $config->set('cache.stores.symfony_tag_aware_file', [
+            'driver' => 'symfony',
+            'adapter' => FilesystemTagAwareAdapter::class,
+            'path' => storage_path('framework/cache/data'),
+        ]);
+
+        $config->set('cache.stores.symfony_inefficient_tag_aware_file', [
             'driver' => 'symfony',
             'adapter' => FilesystemTagAwareAdapter::class,
             'path' => storage_path('framework/cache/data'),

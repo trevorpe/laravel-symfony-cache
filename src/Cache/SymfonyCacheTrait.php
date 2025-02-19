@@ -10,6 +10,11 @@ trait SymfonyCacheTrait
 {
     protected AdapterInterface $cacheAdapter;
 
+    public function getAdapter(): AdapterInterface
+    {
+        return $this->cacheAdapter;
+    }
+
     public function get($key)
     {
         if (is_array($key)) {
