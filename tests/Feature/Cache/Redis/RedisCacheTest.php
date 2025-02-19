@@ -4,9 +4,9 @@ namespace Tests\Feature\Cache\Redis;
 
 use Illuminate\Cache\Repository;
 use Illuminate\Support\Facades\Cache;
-use Tests\Feature\Cache\TaggedCacheTestCase;
+use Tests\Feature\Cache\CacheTestCase;
 
-class RedisCacheTest extends TaggedCacheTestCase
+class RedisCacheTest extends CacheTestCase
 {
 
     protected function laravelCache(): Repository
