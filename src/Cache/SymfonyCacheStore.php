@@ -2,10 +2,11 @@
 
 namespace Trevorpe\LaravelSymfonyCache\Cache;
 
+use Illuminate\Contracts\Cache\LockProvider;
 use Illuminate\Contracts\Cache\Store;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
 
-class SymfonyCacheStore implements Store
+class SymfonyCacheStore implements Store, LockProvider
 {
     use SymfonyCacheTrait;
 

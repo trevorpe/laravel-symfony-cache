@@ -4,10 +4,11 @@ namespace Trevorpe\LaravelSymfonyCache\Cache;
 
 use Illuminate\Cache\TaggableStore;
 use Illuminate\Cache\TagSet;
+use Illuminate\Contracts\Cache\LockProvider;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 use Trevorpe\LaravelSymfonyCache\Util\CacheKey;
 
-class SymfonyTagAwareCacheStore extends TaggableStore
+class SymfonyTagAwareCacheStore extends TaggableStore implements LockProvider
 {
     use SymfonyCacheTrait;
 
