@@ -19,22 +19,24 @@ use Trevorpe\LaravelSymfonyCache\Cache\SymfonyTagAwareCacheStore;
 
 class LaravelSymfonyCacheServiceProvider extends ServiceProvider
 {
-    public function boot()
+    public function register()
     {
         $serviceProvider = $this;
 
-        Cache::extend(
-            'symfony',
-            function (Application $app, array $config) use ($serviceProvider) {
-                $adapter = $serviceProvider->createAdapterFromConfig($config);
+        $this->app->booting(function () use ($serviceProvider) {
+            Cache::extend(
+                'symfony',
+                function (Application $app, array $config) use ($serviceProvider) {
+                    $adapter = $serviceProvider->createAdapterFromConfig($config);
 
-                $store = $adapter instanceof TagAwareAdapterInterface
-                    ? new SymfonyTagAwareCacheStore($adapter)
-                    : new SymfonyCacheStore($adapter);
+                    $store = $adapter instanceof TagAwareAdapterInterface
+                        ? new SymfonyTagAwareCacheStore($adapter)
+                        : new SymfonyCacheStore($adapter);
 
-                return Cache::repository($store);
-            }
-        );
+                    return Cache::repository($store);
+                }
+            );
+        });
     }
 
     public function createAdapterFromConfig(array $config): AdapterInterface
