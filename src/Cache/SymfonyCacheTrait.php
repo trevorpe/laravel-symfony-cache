@@ -2,12 +2,15 @@
 
 namespace Trevorpe\LaravelSymfonyCache\Cache;
 
+use Illuminate\Cache\HasCacheLock;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\Cache\CacheItem;
 use Trevorpe\LaravelSymfonyCache\Util\CacheKey;
 
 trait SymfonyCacheTrait
 {
+    use HasCacheLock;
+
     protected AdapterInterface $cacheAdapter;
 
     public function getAdapter(): AdapterInterface
