@@ -5,11 +5,11 @@ namespace Tests\Feature\Cache;
 use Illuminate\Cache\Repository;
 use Illuminate\Contracts\Cache\LockProvider;
 use Tests\TestCase;
-use Trevorpe\LaravelSymfonyCache\Cache\SymfonyCacheStoreFactory;
+use Trevorpe\LaravelSymfonyCache\Cache\SymfonyCacheFactory;
 
 abstract class CacheLockTestCase extends TestCase
 {
-    protected SymfonyCacheStoreFactory $factory;
+    protected SymfonyCacheFactory $factory;
 
     protected Repository $cacheRepository;
 
@@ -17,7 +17,7 @@ abstract class CacheLockTestCase extends TestCase
     {
         parent::setUp();
 
-        $this->factory = app(SymfonyCacheStoreFactory::class);
+        $this->factory = app(SymfonyCacheFactory::class);
 
         $this->cacheRepository()->clear();
     }

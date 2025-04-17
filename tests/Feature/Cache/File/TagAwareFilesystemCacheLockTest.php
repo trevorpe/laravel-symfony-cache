@@ -10,7 +10,7 @@ class TagAwareFilesystemCacheLockTest extends CacheLockTestCase
 {
     protected function cacheRepository(): Repository
     {
-        return $this->cacheRepository ??= $this->factory->make([
+        return $this->cacheRepository ??= $this->factory->repositoryFromConfig([
             'driver' => 'symfony',
             'adapter' => FilesystemTagAwareAdapter::class,
             'path' => storage_path('framework/cache/data'),

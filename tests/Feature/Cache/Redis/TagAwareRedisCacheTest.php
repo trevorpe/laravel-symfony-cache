@@ -19,7 +19,7 @@ class TagAwareRedisCacheTest extends TaggedCacheTestCase
 
     protected function symfonyCache(): Repository
     {
-        return $this->cacheRepository ??= $this->factory->make([
+        return $this->cacheRepository ??= $this->factory->repositoryFromConfig([
             'driver' => 'symfony',
             'adapter' => RedisTagAwareAdapter::class,
             'connection' => env('REDIS_CACHE_CONNECTION', 'cache'),
@@ -29,7 +29,7 @@ class TagAwareRedisCacheTest extends TaggedCacheTestCase
 
     public function test_tag_aware_adapter_gets_returned_when_asking_for_inefficient_redis()
     {
-        $repository = $this->factory->make([
+        $repository = $this->factory->repositoryFromConfig([
             'driver' => 'symfony',
             'adapter' => RedisAdapter::class,
             'connection' => env('REDIS_CACHE_CONNECTION', 'cache'),

@@ -3,10 +3,11 @@
 namespace Trevorpe\LaravelSymfonyCache\Cache;
 
 use Illuminate\Cache\Repository;
+use Illuminate\Contracts\Cache\Store;
 use Illuminate\Support\Facades\Cache;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 
-class SymfonyCacheStoreFactory
+class SymfonyCacheFactory
 {
     protected SymfonyCacheAdapterFactory $adapterFactory;
 
@@ -15,14 +16,17 @@ class SymfonyCacheStoreFactory
         $this->adapterFactory = $adapterFactory;
     }
 
-    public function make(array $config): Repository
+    public function repositoryFromConfig(array $config): Repository
+    {
+        return Cache::repository($this->storeFromConfig($config));
+    }
+
+    public function storeFromConfig(array $config): Store
     {
         $adapter = $this->adapterFactory->createAdapterFromConfig($config);
 
-        $store = $adapter instanceof TagAwareAdapterInterface
+        return $adapter instanceof TagAwareAdapterInterface
             ? new SymfonyTagAwareCacheStore($adapter)
             : new SymfonyCacheStore($adapter);
-
-        return Cache::repository($store);
     }
 }

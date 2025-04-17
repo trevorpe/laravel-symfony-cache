@@ -10,7 +10,7 @@ class ArrayCacheLockTest extends CacheLockTestCase
 {
     protected function cacheRepository(): Repository
     {
-        return $this->cacheRepository ??= $this->factory->make([
+        return $this->cacheRepository ??= $this->factory->repositoryFromConfig([
             'driver' => 'symfony',
             'adapter' => ArrayAdapter::class,
         ]);

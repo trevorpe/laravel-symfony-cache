@@ -19,7 +19,7 @@ class TagAwareFilesystemCacheTest extends TaggedCacheTestCase
 
     protected function symfonyCache(): Repository
     {
-        return $this->cacheRepository ??= $this->factory->make([
+        return $this->cacheRepository ??= $this->factory->repositoryFromConfig([
             'driver' => 'symfony',
             'adapter' => FilesystemTagAwareAdapter::class,
             'path' => storage_path('framework/cache/data'),
@@ -28,7 +28,7 @@ class TagAwareFilesystemCacheTest extends TaggedCacheTestCase
 
     public function test_tag_aware_adapter_gets_returned_when_asking_for_inefficient_filesystem()
     {
-        $repository = $this->factory->make([
+        $repository = $this->factory->repositoryFromConfig([
             'driver' => 'symfony',
             'adapter' => FilesystemTagAwareAdapter::class,
             'path' => storage_path('framework/cache/data'),

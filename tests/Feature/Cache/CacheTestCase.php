@@ -5,7 +5,7 @@ namespace Tests\Feature\Cache;
 use Carbon\CarbonInterval;
 use Illuminate\Cache\Repository;
 use Tests\TestCase;
-use Trevorpe\LaravelSymfonyCache\Cache\SymfonyCacheStoreFactory;
+use Trevorpe\LaravelSymfonyCache\Cache\SymfonyCacheFactory;
 
 /**
  * @extends Repository
@@ -34,7 +34,7 @@ class SyncedCache {
 
 abstract class CacheTestCase extends TestCase
 {
-    protected SymfonyCacheStoreFactory $factory;
+    protected SymfonyCacheFactory $factory;
 
     protected Repository $cacheRepository;
 
@@ -46,7 +46,7 @@ abstract class CacheTestCase extends TestCase
     {
         parent::setUp();
 
-        $this->factory = app(SymfonyCacheStoreFactory::class);
+        $this->factory = app(SymfonyCacheFactory::class);
 
         $this->syncedCache()->clear();
     }

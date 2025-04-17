@@ -17,7 +17,7 @@ class TagAwareArrayCacheTest extends TaggedCacheTestCase
 
     protected function symfonyCache(): Repository
     {
-        return $this->cacheRepository ??= $this->factory->make([
+        return $this->cacheRepository ??= $this->factory->repositoryFromConfig([
             'driver' => 'symfony',
             'adapter' => ArrayAdapter::class,
             'tag_aware' => true

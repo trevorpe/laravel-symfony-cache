@@ -17,7 +17,7 @@ class RedisCacheTest extends CacheTestCase
 
     protected function symfonyCache(): Repository
     {
-        return $this->cacheRepository ??= $this->factory->make([
+        return $this->cacheRepository ??= $this->factory->repositoryFromConfig([
             'driver' => 'symfony',
             'adapter' => RedisAdapter::class,
             'connection' => env('REDIS_CACHE_CONNECTION', 'cache'),

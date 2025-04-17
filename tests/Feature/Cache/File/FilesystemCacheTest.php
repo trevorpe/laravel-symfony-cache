@@ -17,7 +17,7 @@ class FilesystemCacheTest extends CacheTestCase
 
     protected function symfonyCache(): Repository
     {
-        return $this->cacheRepository ??= $this->factory->make([
+        return $this->cacheRepository ??= $this->factory->repositoryFromConfig([
             'driver' => 'symfony',
             'adapter' => FilesystemAdapter::class,
             'path' => storage_path('framework/cache/data'),

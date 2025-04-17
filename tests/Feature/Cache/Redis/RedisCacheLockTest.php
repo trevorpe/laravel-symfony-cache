@@ -11,7 +11,7 @@ class RedisCacheLockTest extends CacheLockTestCase
 
     protected function cacheRepository(): Repository
     {
-        return $this->cacheRepository ??= $this->factory->make([
+        return $this->cacheRepository ??= $this->factory->repositoryFromConfig([
             'driver' => 'symfony',
             'adapter' => RedisAdapter::class,
             'connection' => env('REDIS_CACHE_CONNECTION', 'cache'),
