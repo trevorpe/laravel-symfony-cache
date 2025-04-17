@@ -19,12 +19,20 @@ class TagAwareFilesystemCacheTest extends TaggedCacheTestCase
 
     protected function symfonyCache(): Repository
     {
-        return Cache::store('symfony_tag_aware_file');
+        return $this->cacheRepository ??= $this->factory->repositoryFromConfig([
+            'driver' => 'symfony',
+            'adapter' => FilesystemTagAwareAdapter::class,
+            'path' => storage_path('framework/cache/data'),
+        ]);
     }
 
     public function test_tag_aware_adapter_gets_returned_when_asking_for_inefficient_filesystem()
     {
-        $repository = Cache::store('symfony_inefficient_tag_aware_file');
+        $repository = $this->factory->repositoryFromConfig([
+            'driver' => 'symfony',
+            'adapter' => FilesystemTagAwareAdapter::class,
+            'path' => storage_path('framework/cache/data'),
+        ]);
 
         /** @var SymfonyTagAwareCacheStore $store */
         $store = $repository->getStore();

@@ -3,13 +3,16 @@
 namespace Tests\Feature\Cache\Array;
 
 use Illuminate\Cache\Repository;
-use Illuminate\Support\Facades\Cache;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Tests\Feature\Cache\CacheLockTestCase;
 
 class ArrayCacheLockTest extends CacheLockTestCase
 {
     protected function cacheRepository(): Repository
     {
-        return Cache::store('symfony_array');
+        return $this->cacheRepository ??= $this->factory->repositoryFromConfig([
+            'driver' => 'symfony',
+            'adapter' => ArrayAdapter::class,
+        ]);
     }
 }
