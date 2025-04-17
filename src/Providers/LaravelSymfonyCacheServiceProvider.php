@@ -5,10 +5,8 @@ namespace Trevorpe\LaravelSymfonyCache\Providers;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\ServiceProvider;
-use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 use Trevorpe\LaravelSymfonyCache\Cache\CacheAdapterFactory;
-use Trevorpe\LaravelSymfonyCache\Cache\SymfonyCacheStore;
-use Trevorpe\LaravelSymfonyCache\Cache\SymfonyTagAwareCacheStore;
+use Trevorpe\LaravelSymfonyCache\Cache\SymfonyCacheStoreFactory;
 
 class LaravelSymfonyCacheServiceProvider extends ServiceProvider
 {
@@ -16,20 +14,16 @@ class LaravelSymfonyCacheServiceProvider extends ServiceProvider
     {
         $this->app->singleton(CacheAdapterFactory::class);
 
+        $this->app->singleton(SymfonyCacheStoreFactory::class);
+
         $this->app->booting(function () {
             Cache::extend(
                 'symfony',
                 function (Application $app, array $config) {
-                    /** @var CacheAdapterFactory $factory */
-                    $factory = $app->make(CacheAdapterFactory::class);
+                    /** @var SymfonyCacheStoreFactory $factory */
+                    $factory = $app->make(SymfonyCacheStoreFactory::class);
 
-                    $adapter = $factory->createAdapterFromConfig($config);
-
-                    $store = $adapter instanceof TagAwareAdapterInterface
-                        ? new SymfonyTagAwareCacheStore($adapter)
-                        : new SymfonyCacheStore($adapter);
-
-                    return Cache::repository($store);
+                    return $factory->make($config);
                 }
             );
         });
