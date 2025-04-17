@@ -4,6 +4,7 @@ namespace Tests\Feature\Cache\File;
 
 use Illuminate\Cache\Repository;
 use Illuminate\Support\Facades\Cache;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Tests\Feature\Cache\CacheTestCase;
 
 class FilesystemCacheTest extends CacheTestCase
@@ -16,6 +17,10 @@ class FilesystemCacheTest extends CacheTestCase
 
     protected function symfonyCache(): Repository
     {
-        return Cache::store('symfony_file');
+        return $this->cacheRepository ??= $this->factory->make([
+            'driver' => 'symfony',
+            'adapter' => FilesystemAdapter::class,
+            'path' => storage_path('framework/cache/data'),
+        ]);
     }
 }

@@ -4,6 +4,7 @@ namespace Tests\Feature\Cache\Array;
 
 use Illuminate\Cache\Repository;
 use Illuminate\Support\Facades\Cache;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Tests\Feature\Cache\TaggedCacheTestCase;
 
 class TagAwareArrayCacheTest extends TaggedCacheTestCase
@@ -16,6 +17,10 @@ class TagAwareArrayCacheTest extends TaggedCacheTestCase
 
     protected function symfonyCache(): Repository
     {
-        return Cache::store('symfony_tag_aware_array');
+        return $this->cacheRepository ??= $this->factory->make([
+            'driver' => 'symfony',
+            'adapter' => ArrayAdapter::class,
+            'tag_aware' => true
+        ]);
     }
 }

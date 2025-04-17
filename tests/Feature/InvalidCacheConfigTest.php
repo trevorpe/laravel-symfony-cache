@@ -1,13 +1,18 @@
 <?php
 
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Foundation\Application;
+use Symfony\Component\Cache\Adapter\ApcuAdapter;
+use Trevorpe\LaravelSymfonyCache\Cache\SymfonyCacheStoreFactory;
 
 describe('invalid Symfony adapter class', function () {
     it('throws exception', function () {
         $this->expectException(\ValueError::class);
         $this->expectExceptionMessageMatches('/.*a valid Symfony adapter.*/');
 
-        Cache::store('symfony_non_cache');
+        app(SymfonyCacheStoreFactory::class)->make([
+            'driver' => 'symfony',
+            'adapter' => Application::class,
+        ]);
     });
 });
 
@@ -16,6 +21,9 @@ describe('unsupported Symfony adapter class', function () {
         $this->expectException(\ValueError::class);
         $this->expectExceptionMessageMatches('/.*is not a supported Symfony adapter.*/');
 
-        Cache::store('symfony_unsupported');
+        app(SymfonyCacheStoreFactory::class)->make([
+            'driver' => 'symfony',
+            'adapter' => ApcuAdapter::class,
+        ]);
     });
 });
