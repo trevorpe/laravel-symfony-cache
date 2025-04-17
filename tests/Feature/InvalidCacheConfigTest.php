@@ -9,7 +9,7 @@ describe('invalid Symfony adapter class', function () {
         $this->expectException(\ValueError::class);
         $this->expectExceptionMessageMatches('/.*a valid Symfony adapter.*/');
 
-        app(SymfonyCacheFactory::class)->make([
+        app(SymfonyCacheFactory::class)->repositoryFromConfig([
             'driver' => 'symfony',
             'adapter' => Application::class,
         ]);
@@ -21,7 +21,7 @@ describe('unsupported Symfony adapter class', function () {
         $this->expectException(\ValueError::class);
         $this->expectExceptionMessageMatches('/.*is not a supported Symfony adapter.*/');
 
-        app(SymfonyCacheFactory::class)->make([
+        app(SymfonyCacheFactory::class)->repositoryFromConfig([
             'driver' => 'symfony',
             'adapter' => ApcuAdapter::class,
         ]);
