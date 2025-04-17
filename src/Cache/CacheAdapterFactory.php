@@ -29,7 +29,7 @@ class CacheAdapterFactory
     {
         $adapter = $config['adapter'] ?? null;
 
-        if (!$adapter || !is_a($adapter, AdapterInterface::class , true)) {
+        if (!$adapter || !is_a($adapter, AdapterInterface::class, true)) {
             throw new \ValueError(
                 'the `adapter` property must point to a valid Symfony adapter (one implementing ' . AdapterInterface::class . ')'
             );
