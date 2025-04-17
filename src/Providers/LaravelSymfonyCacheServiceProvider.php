@@ -5,14 +5,14 @@ namespace Trevorpe\LaravelSymfonyCache\Providers;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\ServiceProvider;
-use Trevorpe\LaravelSymfonyCache\Cache\CacheAdapterFactory;
+use Trevorpe\LaravelSymfonyCache\Cache\SymfonyCacheAdapterFactory;
 use Trevorpe\LaravelSymfonyCache\Cache\SymfonyCacheStoreFactory;
 
 class LaravelSymfonyCacheServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        $this->app->singleton(CacheAdapterFactory::class);
+        $this->app->singleton(SymfonyCacheAdapterFactory::class);
 
         $this->app->singleton(SymfonyCacheStoreFactory::class);
 

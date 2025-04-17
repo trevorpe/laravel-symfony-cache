@@ -14,7 +14,7 @@ use Symfony\Component\Cache\Adapter\RedisTagAwareAdapter;
 use Symfony\Component\Cache\Adapter\TagAwareAdapter;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 
-class CacheAdapterFactory
+class SymfonyCacheAdapterFactory
 {
     protected readonly Container $container;
     protected readonly Repository $config;

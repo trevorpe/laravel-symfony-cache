@@ -8,9 +8,9 @@ use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 
 class SymfonyCacheStoreFactory
 {
-    protected CacheAdapterFactory $adapterFactory;
+    protected SymfonyCacheAdapterFactory $adapterFactory;
 
-    public function __construct(CacheAdapterFactory $adapterFactory)
+    public function __construct(SymfonyCacheAdapterFactory $adapterFactory)
     {
         $this->adapterFactory = $adapterFactory;
     }
