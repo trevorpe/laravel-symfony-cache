@@ -9,9 +9,9 @@ trait SymfonyRedisCacheTrait
 {
     protected Factory $redis;
 
-    protected string $prefix = '';
+    protected ?string $prefix = null;
 
-    protected string $connection = 'default';
+    protected ?string $connection = null;
 
     abstract protected function createRedisAdapter(): AdapterInterface;
 
@@ -46,10 +46,10 @@ trait SymfonyRedisCacheTrait
 
     public function getPrefix(): string
     {
-        return $this->prefix;
+        return $this->prefix ?? '';
     }
 
-    public function setPrefix(string $prefix): static
+    public function setPrefix(?string $prefix): static
     {
         $this->prefix = $prefix;
         return $this;

@@ -9,7 +9,7 @@ class SymfonyRedisStore extends SymfonyCacheStore
 {
     use SymfonyRedisCacheTrait;
 
-    public function __construct(Factory $redis, string $prefix = '', string $connection = 'default')
+    public function __construct(Factory $redis, ?string $prefix = null, ?string $connection = null)
     {
         $this->redis = $redis;
         $this->setPrefix($prefix);
