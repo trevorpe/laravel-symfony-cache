@@ -61,24 +61,6 @@ class SymfonyCacheAdapterFactory
         return $adapterInstance;
     }
 
-    public function createRedisTagAwareAdapter(array $config): RedisTagAwareAdapter
-    {
-        return new RedisTagAwareAdapter(
-            $this->getRedisClient($config),
-            $this->getPrefix($config),
-            $this->getDefaultLifetime($config)
-        );
-    }
-
-    public function createRedisAdapter(array $config): RedisAdapter
-    {
-        return new RedisAdapter(
-            $this->getRedisClient($config),
-            $this->getPrefix($config),
-            $this->getDefaultLifetime($config)
-        );
-    }
-
     public function createFilesystemTagAwareAdapter(array $config): FilesystemTagAwareAdapter
     {
         return new FilesystemTagAwareAdapter(
