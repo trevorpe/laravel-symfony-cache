@@ -53,7 +53,7 @@ class SymfonyCacheFactory
             throw new TypeError("unsupported redis adapter $desiredAdapter provided");
         }
 
-        $args = Arr::pluck($redisConfig, ['prefix', 'connection']);
+        $args = Arr::only($redisConfig, ['prefix', 'connection']);
 
         if ($desiredAdapter === RedisTagAwareAdapter::class || $tagAware) {
             return $this->container->make(SymfonyTagAwareRedisStore::class, $args);
