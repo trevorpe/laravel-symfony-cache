@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Cache;
 use Symfony\Component\Cache\Adapter\RedisAdapter;
 use Symfony\Component\Cache\Adapter\RedisTagAwareAdapter;
 use Tests\Feature\Cache\TaggedCacheTestCase;
+use Trevorpe\LaravelSymfonyCache\Cache\SymfonyRedisStore;
 use Trevorpe\LaravelSymfonyCache\Cache\SymfonyTagAwareCacheStore;
 
 class TagAwareRedisCacheTest extends TaggedCacheTestCase
@@ -42,5 +43,23 @@ class TagAwareRedisCacheTest extends TaggedCacheTestCase
 
         // We expect it to remap to the more performance Redis adapter
         $this->assertInstanceOf(RedisTagAwareAdapter::class, $store->getAdapter());
+    }
+
+    public function test_connection_is_set_to_cache()
+    {
+        /** @var SymfonyRedisStore $cache */
+        $cache = $this->symfonyCache()->getStore();
+
+        $this->assertEquals('cache', $cache->connection()->getName());
+    }
+
+    public function test_setting_connection_updates_redis_client()
+    {
+        /** @var SymfonyRedisStore $cache */
+        $cache = $this->symfonyCache()->getStore();
+
+        $cache->setConnection('default');
+
+        $this->assertEquals('default', $cache->connection()->getName());
     }
 }
