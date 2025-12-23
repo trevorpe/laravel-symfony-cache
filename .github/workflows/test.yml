@@ -27,20 +27,25 @@ jobs:
             testbench: 8.*
             php: 8.1
             symfony-cache: ^6.0
+            pest: ^2.0
+
           - laravel: 10.*
             testbench: 8.*
             php: 8.2
             symfony-cache: ^6.0
+            pest: ^2.0
 
           - laravel: 10.*
             testbench: 8.*
             php: 8.2
             symfony-cache: ^7.0
+            pest: ^2.0
 
           - laravel: 10.*
             testbench: 8.*
             php: 8.3
             symfony-cache: ^7.0
+            pest: ^2.0
 
           - laravel: 11.*
             testbench: 9.*
@@ -54,6 +59,21 @@ jobs:
 
           - laravel: 11.*
             testbench: 9.*
+            php: 8.4
+            symfony-cache: ^7.0
+
+          - laravel: 12.*
+            testbench: 10.*
+            php: 8.2
+            symfony-cache: ^7.0
+
+          - laravel: 12.*
+            testbench: 10.*
+            php: 8.3
+            symfony-cache: ^7.0
+
+          - laravel: 12.*
+            testbench: 10.*
             php: 8.4
             symfony-cache: ^7.0
 
@@ -85,7 +105,11 @@ jobs:
 
       - name: Install dependencies
         run: |
-          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" "symfony/cache:${{ matrix.symfony-cache }}" --no-interaction --no-update
+          composer require "pestphp/pest:${{ matrix.pest || '^3.0' }}" \
+            "laravel/framework:${{ matrix.laravel }}" \
+            "orchestra/testbench:${{ matrix.testbench }}" \
+            "symfony/cache:${{ matrix.symfony-cache }}" \
+            --no-interaction --no-update
           composer update --prefer-dist --no-interaction --no-suggest
 
       - name: Execute tests
