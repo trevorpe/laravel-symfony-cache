@@ -77,12 +77,6 @@ jobs:
             php: 8.4
             symfony-cache: ^7.0
 
-          - laravel: 12.*
-            testbench: 10.*
-            php: 8.5
-            symfony-cache: ^7.0
-            pest: ^4.0
-
     name: P${{ matrix.php }} - L${{ matrix.laravel }}
 
     services:
