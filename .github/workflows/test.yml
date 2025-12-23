@@ -27,21 +27,25 @@ jobs:
             testbench: 8.*
             php: 8.1
             symfony-cache: ^6.0
+            pest: ^2.0
 
           - laravel: 10.*
             testbench: 8.*
             php: 8.2
             symfony-cache: ^6.0
+            pest: ^2.0
 
           - laravel: 10.*
             testbench: 8.*
             php: 8.2
             symfony-cache: ^7.0
+            pest: ^2.0
 
           - laravel: 10.*
             testbench: 8.*
             php: 8.3
             symfony-cache: ^7.0
+            pest: ^2.0
 
           - laravel: 11.*
             testbench: 9.*
@@ -77,6 +81,7 @@ jobs:
             testbench: 10.*
             php: 8.5
             symfony-cache: ^7.0
+            pest: ^4.0
 
     name: P${{ matrix.php }} - L${{ matrix.laravel }}
 
@@ -106,6 +111,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          composer require "pestphp/pest:${{ matrix.pest || '^3.0' }}"
           composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" "symfony/cache:${{ matrix.symfony-cache }}" --no-interaction --no-update
           composer update --prefer-dist --no-interaction --no-suggest
 
