@@ -15,8 +15,8 @@ project.
 
 ## Requirements
 
-- Laravel 10.x or greater
-- Symfony Cache 7.2 or greater
+- Laravel 11.x or greater
+- Symfony Cache 7.4 or greater
 
 ## Installation
 
