@@ -4,11 +4,11 @@ namespace Tests\Feature\Cache\Redis;
 
 use Illuminate\Cache\Repository;
 use Illuminate\Support\Facades\Cache;
-use Symfony\Component\Cache\Adapter\RedisTagAwareAdapter;
+use Symfony\Component\Cache\Adapter\RedisAdapter;
 use Tests\Feature\Cache\TaggedCacheTestCase;
 use Trevorpe\LaravelSymfonyCache\Cache\SymfonyRedisStore;
 
-class TagAwareRedisCacheTest extends TaggedCacheTestCase
+class RedisTagAwareDecoratorCacheTest extends TaggedCacheTestCase
 {
 
     protected function laravelCache(): Repository
@@ -20,9 +20,10 @@ class TagAwareRedisCacheTest extends TaggedCacheTestCase
     {
         return $this->cacheRepository ??= $this->factory->repositoryFromConfig([
             'driver' => 'symfony',
-            'adapter' => RedisTagAwareAdapter::class,
+            'adapter' => RedisAdapter::class,
             'connection' => env('REDIS_CACHE_CONNECTION', 'cache'),
-            'prefix' => 'symfony'
+            'prefix' => 'symfony',
+            'tag_aware' => true,
         ]);
     }
 

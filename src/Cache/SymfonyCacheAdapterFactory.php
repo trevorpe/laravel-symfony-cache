@@ -9,8 +9,6 @@ use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Cache\Adapter\FilesystemTagAwareAdapter;
-use Symfony\Component\Cache\Adapter\RedisAdapter;
-use Symfony\Component\Cache\Adapter\RedisTagAwareAdapter;
 use Symfony\Component\Cache\Adapter\TagAwareAdapter;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 
@@ -35,16 +33,6 @@ class SymfonyCacheAdapterFactory
             );
         }
 
-        // If there are more efficient versions of the requested tag-aware adapter, re-map
-        $isTagAware = $config['tag_aware'] ?? false;
-        if ($isTagAware && !is_a($adapter, TagAwareAdapterInterface::class)) {
-            $adapter = match ($adapter) {
-                RedisAdapter::class => RedisTagAwareAdapter::class,
-                FilesystemAdapter::class => FilesystemTagAwareAdapter::class,
-                default => $adapter
-            };
-        }
-
         $adapterBasename = class_basename($adapter);
         if (!method_exists($this, $method = "create$adapterBasename")) {
             throw new \ValueError("$adapterBasename is not a supported Symfony adapter");
@@ -52,8 +40,8 @@ class SymfonyCacheAdapterFactory
 
         $adapterInstance = $this->container->call([$this, $method], ['config' => $config]);
 
-        // If the adapter was not remapped to a more efficient tag-aware adapter above,
-        // we then try to decorate the adapter with the general tag-aware adapter
+        // We decorate the adapter with the tag-aware adapter when requested
+        $isTagAware = $config['tag_aware'] ?? false;
         if ($isTagAware && !is_a($adapterInstance, TagAwareAdapterInterface::class)) {
             $adapterInstance = new TagAwareAdapter($adapterInstance);
         }
